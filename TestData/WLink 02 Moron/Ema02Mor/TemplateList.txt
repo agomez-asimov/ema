@@ -1,0 +1,2 @@
+mb1.HTX				C:\Program Files (x86)\WLink 02 Moron\web\mb1.HTX	C:\Program Files (x86)\WLink 02 Moron\web\mb1.htm
+mb1cel.htx				C:\Program Files (x86)\WLink 02 Moron\web\mb1cel.htx	C:\Program Files (x86)\WLink 02 Moron\web\mb1cel.htm

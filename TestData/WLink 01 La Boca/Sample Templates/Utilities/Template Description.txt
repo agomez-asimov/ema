@@ -1,0 +1,29 @@
+Utility Template Files
+
+These templates are useful tools for learning how to use the WeatherLink 
+software to upload data, for seeing how the image options work, and as a
+example for using the weather tags and images in your own templates. 
+
+The template "Tag-List.htx" produces an HTML file that lists all the weather
+parameters available for template substitution. 
+
+The files "CurrentImages.htm" and "CurrentImages-Refresh.htm" will display all 
+of the current image files found in the same directory as the htm file. There are
+no weather tags in these files, so they only need to be uploaded to a web site 
+once. 
+
+CurrentImages-Refresh.htm contains code to have the browser auromatically 
+refresh the page every 30 seconds. You can change how often in seconds to refresh 
+the page by editing the line <META HTTP-EQUIV="refresh" CONTENT=30>.
+
+You can test the effect of uploading at different intervals or with different 
+settings in different profiles by setting the Current Image Directory to the same 
+value in different profiles.
+
+The file "HistoricalImages.htm" will display all of the historical graph files in 
+the same directory. It does not contain weather tags and only needs to be uploaded
+once.
+
+The background color on the image pages is not the same as any of the preset 
+image background colors. This allows you to see the effect of the Transparent
+setting.

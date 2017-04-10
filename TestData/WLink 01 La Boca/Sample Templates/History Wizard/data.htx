@@ -1,0 +1,4 @@
+Current Conditions at <!--StationCity-->, <!--StationState--> as of <!--Date--> <!--Time-->:     Temperature <!--outsideTemp--><!--tempUnit-->     
+Wind <!--windDirection--> at <!--windSpeed--> <!--windUnit-->     
+Wind Chill <!--windChill--><!--tempUnit-->     
+Today's Rain <!--dailyRain--> <!--rainUnit-->     Yearly Total <!--totalRain--> <!--rainUnit-->          Sunrise:     <!--sunriseTime-->     Sunset:     <!--sunsetTime-->

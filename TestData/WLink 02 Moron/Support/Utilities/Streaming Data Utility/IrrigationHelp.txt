@@ -1,0 +1,48 @@
+Logger Type
+
+The software indicates the logger type and firmware revision level of the streaming data logger in the logger type box.
+
+Time Out Period
+
+Normally, the Irrigation data logger will send pulse data to an Automated Irrigation Sprinkler System Controller.  However, the Irrigation data logger utilizes a time-out period for ceasing Irrigation functions whenever software attempts to communicate to the logger.  The default setting is 5 seconds.  You may adjust this value if you wish Irrigation functions to resume sooner or later after communicating to the logger using WeatherLink® or the Streaming Data Utility.
+
+Note:  Once communications to WeatherLink are initiated and successful, the streaming data logger will be unable to communicate with the Streaming Data Utility until the Time Out Period expires.  If you need to communicate to the logger with both the Streaming Data Utility and WeatherLink®, you should communicate using the Streaming Data Utility first.
+
+Use Residential
+
+Check this dialog box if you choose to use the Irrigation data logger with a Residential Irrigation System Controller to inhibit the watering cycle.  This type of sprinkler controller will be what is typically installed by most homeowners and will have inputs for a Common and in many cases a Rain Sensor.  See the Installation section below for installation instructions.
+
+Do NOT check this box if you are using this product in an Industrial application where the controller has inputs for wind, rain and/or ET.
+
+
+Units
+
+Choose whether you want to enter your Rain and ET values in inches or millimeters.  This will not affect how the rain or ET outputs function.  The Rain will still output according to the rain collector type and ET will always output every 0.01 inch.
+
+
+Default
+
+Press this button to restore the data entries to their default values. You must still hit OK to save the settings in the data logger.
+
+
+Residential Configuration
+
+This function is designed to inhibit the irrigation cycle when sufficient rainfall and/or irrigation has occurred to make up for any ET loss over the past irrigation cycle.  In this mode, the Irrigation data logger calculates Rain minus ET every cycle to get the net result, much like balancing a checkbook.  In this manner, Rain can be thought of as deposits, and ET as withdrawals.  However, unlike a checking account, this number can run negative.  In this case, deposits of rain from irrigation need to be entered to make the net balance zero again.  The Irrigation Amount you enter into the dialog box (see below) is applied at the end of each cycle when the data logger allows the irrigation system to run.  Positive numbers in the balance indicate more rain and irrigation than ET; negative numbers indicate more ET than rain and irrigation has occurred over the irrigation cycle.  If the value is negative, then it indicates that watering needs to occur to make up for the deficit that rainfall has not made up.  Please note that this difference only updates once per every cycle, thus there will be a cycle-long delay in the system responding to rain.  Also, the irrigation system will be enabled upon power up until the first Irrigation Cycle has completed.  
+
+The following functions are only available in the Residential mode with “Use Residential” checked:
+
+Irrigation Cycle
+
+Indicate the length of your entire watering cycle in days.  The irrigation data logger determines for the duration of each cycle whether or not to allow the irrigation system to run.  The default value is 1 and represents a daily watering cycle.  This value is used to determine over what period to calculate the Rain – ET balance.  Enter a value of 2, for example, if your watering cycle is every other day.  If your schedule is a Monday, Wednesday, Friday schedule, for example, you can either use the most frequent watering interval of 3 days (Friday – Monday) or a weekly watering period (7 days).  Since most ET occurs during the day on a daily basis, using these values will provide the most consistent results with your irrigation system.  Your watering cycle should represent the period of time it takes for all your programmed cycles on your irrigation controller to start, finish and then begin again.  If you have some circuits on a 2 day cycle, and others on a 3 day cycle, it is recommended that you enter the longest of all the cycles you use.  In this case, enter 3 days.  Please note that altering this value restarts the cycle.
+
+Irrigation Amount
+
+Enter the amount of water in inches that your Irrigation system puts out during one cycle.  The cycle should be defined as recommended in the previous paragraph.  Typically, placing several cans around your lawn, and measuring the depth of water in the cans with a ruler will provide you with the Irrigation Amount for that location.  Average all the locations to get the number to enter into this dialog box.  Since the Vantage Pro™ Console or Weather Envoy™ calculates reference ET over regularly mowed grass, it is best to enter the lawn sprinkler value.  Consult your Vantage Pro™ Console or Weather Envoy™ Manual for more information on ET.
+ 
+Maximum Effective Rain
+
+This function puts a “cap” on the amount of rain that is counted toward the balance between Rain and ET.  The amount entered in this dialog box represents the total amount of rain during a 24 hour period that is counted.  A value of zero in this dialog box disables this function, so that all rain is counted toward the Rain minus ET balance.
+
+Rain Rate Cutoff
+
+This function can be used to inhibit the irrigation cycle in the case where the ET deficit has not been made up by rainfall, but rainfall is occurring at a high enough rate that the combination of rainfall and irrigation may cause runoff and thus waste water.  The default value is 0.30”/hour, which represent a heavy rain rate.  Rain rate is an instantaneous calculation.  Consult your Vantage Pro™ Console or Weather Envoy™ Manual for more information on Rain Rate.  Once this function goes into effect, it inhibits the system until the rain rate reaches zero, which is when it has stopped raining for at least 15 minutes.  If you want your irrigation system to immediately stop watering whenever any rain occurs, set the Rain Rate Cut-Off value to 0.01” (0.1 mm) (see below).  Note that 0.02” or 0.4 mm of rain must accumulate before a rain rate is calculated.

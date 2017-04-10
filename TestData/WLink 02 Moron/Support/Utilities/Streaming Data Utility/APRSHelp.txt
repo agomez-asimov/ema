@@ -1,0 +1,63 @@
+Logger Type
+
+The software indicates the logger type and firmware revision level of the streaming data logger in the logger type box.
+
+Time Out Period
+
+Normally, the streaming data logger with stream an ASCII character string according to the Transmission Rate setting to the Ham Radio TNC modem.  However, the streaming data logger utilizes a time-out period for ceasing streaming whenever software attempts to communicate to the logger.  The default setting is 5 seconds.  You may adjust this value if you wish streaming to resume sooner or later after communicating to the logger using WeatherLink® or the Streaming Data Utility.
+
+Note:  Once communications to WeatherLink are initiated and successful, the streaming data logger will be unable to communicate with the Streaming Data Utility until the Time Out Period expires.  If you need to communicate to the logger with both the Streaming Data Utility and WeatherLink®, you should communicate using the Streaming Data Utility first.
+
+APRS Baud Rate
+
+Use this setting to determine what baud rate to send APRS data to the TNC modem on your Ham Radio.  The default value is 9600.  This is also the recommended maximum value that you should set.
+
+Transmission Rate
+
+Use this setting to determine how often to send APRS data packets.  Initially, you will need to enter a valid value.  The default setting is 5 minutes.  Consult the APRS website for guidance on sending data more or less often.
+
+Note:  Settings longer than 60 minutes will result in one erroneous time stamp during “Fall Back” from Daylight Savings Time.
+
+Latitude & Longitude
+
+For APRS reporting, you must enter your latitude and longitude information.  Enter your latitude and longitude in degrees, minutes and seconds in the appropriate boxes.  The APRS String boxes below indicate what the APRS position character string will look like based on the values entered.  Before any new data is entered, theses boxes indicate the latitude and longitude string currently stored in the streaming data logger.  If “invalid string” is shown in these boxes, either one of the entries is outside the range of valid parameters or, as in the case of the first time you receive the product, no latitude or longitude values have been stored in the data logger.
+
+Default
+
+Press this button to restore the data entries to their default values. You must still hit OK to save the settings in the data logger.
+
+
+Streaming Data Logger Functionality & Troubleshooting
+
+The APRS streaming data logger compiles a character string consisting of the following:
+
+ASCII character “@”,
+The date and time on a 24 hour clock in the following format:  Day of Month, Hour, Minute, where each value is a 2 digit number.
+Lower case “z”,
+Latitude/longitude “position” string: 4903.50N/07201.75W_.
+Vector average wind direction (in degrees) over 2 minutes (reported as 000 if the average wind speed is zero);
+Forward slash “/”,
+Sustained 2-minute wind speed (in mph);
+Lower case “g”,
+Gust (peak wind speed in mph in the last 10 minutes);
+Lower case “t”,
+Temperature (in degrees Fahrenheit). Temperatures below zero are expressed as -01 to -99;
+Lower case “r”,
+Rainfall (in hundredths of an inch) in the last hour,
+Lower case “p”,
+Rainfall (in hundredths of an inch) in the last 24 hours,
+Upper case “P”,
+Rainfall (in hundredths of an inch) since midnight,
+Lower case “h”,
+Humidity (in %. 00 = 100%), omitted if missing;
+Lower case “b”,
+Barometric pressure (Altimeter Setting in tenths of millibars/tenths of hPa), omitted if missing;
+The letter “L”, (upper case if solar radiation is below 1000, lower case if solar radiation is between 1000 and 1999), omitted if missing,
+Solar Radiation (in watts per square meter) last 3 digits (see above), omitted if missing,
+The following character string inside the quotes (including the leading period):  “.DsVP“.  This will indicate that a Davis Vantage Pro is sending the APRS data packet with its own proprietary device.
+Carriage Return character
+Line Feed character
+
+Upon powering up the console, the data logger will report rain over the last hour and the last 24 hour rain initially as zero if the storm rain is zero, otherwise, it will report those values as missing for the first hour and first 24 hours, respectively.  Also, if data is missing due to other problems such as disconnected sensors or poor reception, data may not be reported.
+
+Hourly and last 24 hour rain will resume reporting totals normally after the data logger streaming function is interrupted for PC communication.

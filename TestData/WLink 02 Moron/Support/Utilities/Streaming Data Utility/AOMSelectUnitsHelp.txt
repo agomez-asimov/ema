@@ -1,0 +1,21 @@
+
+Units
+
+Select the units of measure in which data is displayed within this Configuration Utility software.  Choosing units of measure in this software does not affect the units of measure displayed on the Vantage Pro™ console, which may be changed independently of this software.  You may select from the following settings:
+
+Temperature:
+Fahrenheit (°F) or Celsius (°C)
+Note: Wind chill, dewpoint, degree-days, and temperature indexes are all displayed in the same unit of measure as temperature.
+
+Barometer:
+Inches of Hg (in), Millimeters of Hg (mm), Millibars (mb), or HectoPascals (hPa).
+
+Wind Speed:
+Miles per Hour (mph), Knots (knot), kilometers per Hour (km/hr), or Meters per Second (m/s)
+
+Rain:
+Inches (in) or Millimeters (mm)
+
+After selecting units of measure, select OK.
+
+The Configuration Utility saves your choices.  All information is displayed in the units of measure you selected.

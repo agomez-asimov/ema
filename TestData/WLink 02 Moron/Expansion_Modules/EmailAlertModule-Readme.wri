@@ -1,0 +1,105 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fmodern\fcharset0 Courier New;}{\f2\fswiss\fprq2\fcharset0 Arial;}{\f3\fmodern\fprq1\fcharset0 Courier New;}{\f4\fnil\fcharset2 Symbol;}}
+\viewkind4\uc1\pard\qc\ul\b\f0\fs20 README Contents 04-07-2004\par
+E-mail/Phone Alert Expansion Module Version 1.0 for WeatherLink\par
+\pard\ulnone\par
+Product Requirements\par
+Product Features\par
+Known Bugs\par
+Note to Beta Testers\par
+To Install the Program\par
+Module Help Information\par
+Format of the Expansion_Modules\\ModuleList.dat file\par
+\b0\par
+\ul\b Product Requirements\par
+\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-270\li450\ulnone\b0 Version 5.5 or later of the WeatherLink software for Windows (including version 5.5V)\par
+{\pntext\f4\'B7\tab}Windows 98 or later, or Windows 95 with version 4 oe later of Internet Explorer\par
+{\pntext\f4\'B7\tab}Internet connection with access to an SMTP mail server required for e-mail functions\par
+{\pntext\f4\'B7\tab}Cell phone or pager text messaging functions require an e-mail address provided by your service provider.\par
+{\pntext\f4\'B7\tab}Phone alerts require a modem and a normal telephone line to send the alerts. A second phone line is required to receive them\par
+\pard\par
+\ul\b E-mail/Phone Alert Module Version 1.0 Features\par
+\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-270\li450\ulnone\b0 Generates e-mail on either (or both) a fixed schedule, or when user selected alarm conditions occur.\par
+{\pntext\f4\'B7\tab}There are two e-mail formats available: a Standard format for normal usage and a Text Messaging format for use with cell phones and alphanumeric pagers with e-mail capabilities.\par
+{\pntext\f4\'B7\tab}The Standard format lists all alarms that are active, any sensors configured for the station that has missing data, plus a snapshot of the current weather conditions in a format similar to the Summary window.\par
+{\pntext\f4\'B7\tab}The Text Messaging format shows the same data except that the text is abbreviated and you can select exactly which feilds to include so that the most important information can be included in the limited message length available.\par
+{\pntext\f4\'B7\tab}Alarms can be set for 49 different sensor conditions (e.g. High Outside Temp, Low Outside Temp, etc.).\par
+{\pntext\f4\'B7\tab}Two Combination Alarms are available to signal any combination of sensor conditions. (For example: Outside Temperature >= 90 F AND Outside Humidity >= 80 %.)\par
+{\pntext\f4\'B7\tab}Alarm notifications include the name of the alarm, the current value, and the threshold value that triggers the alarm.\par
+{\pntext\f4\'B7\tab}Telephone alerts use a standard modem on the PC to place a phone call if an alarm condition occurs and generates a user defined set of "dial tone patterns" to communicate which alarm condition triggered the phone call. \par
+{\pntext\f4\'B7\tab}Adds the following menu items:\par
+\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-270\li990 Setup: Setup Email Alerts...\par
+{\pntext\f4\'B7\tab}Setup: Setup Telephone Alerts...\par
+{\pntext\f4\'B7\tab}Help: Email/Phone Alert Help...\par
+\pard\li180\par
+\pard\ul\b Known Bugs\par
+\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-270\li450\ulnone\b0 Using an outgoing e-mail virus scanning program (such as Norton Anti-Virus) with a dialup internet connection may cause problems when sending e-mail. To work around this problem, either disable out going e-mail scanning, select the "Stay Connected all the Time" option in the Internet Connection Settings, or establish your dial up internet connection outside of WeatherLink before you send an e-mail.\par
+{\pntext\f4\'B7\tab}The included help file is incomplete. A complete help file will be available on our web site (www.davisnet.com) once it is ready.\par
+\pard\li180\par
+\pard\ul\b Note to Beta Testers\par
+\ulnone\b0 Thank you for participating in our successful beta testing program. Your comments and suggestions helped identify and clarify several issues in the Email/Phone Alert Expansion Module. All of the suggestions you have sent have been added to our "wish list" and may be incorporated into future module versions.\par
+\ul\b\par
+\ulnone\b0 The following bugs in version 1.0.b2 have been fixed in the final version:\par
+\pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-270\li450 Some additional delay was added after sending an e-mail. This may help the virus scanning problem, but it hasn't been tested.\par
+{\pntext\f4\'B7\tab}The 24 hour (1 Day) e-mail interval works.\par
+{\pntext\f4\'B7\tab}Barometer data from the Monitor and Perception stations is calibrated correctly.\par
+{\pntext\f4\'B7\tab}Removed debugging log messages\par
+{\pntext\f4\'B7\tab}Added a "Sending Email" log message\par
+\pard\li180\par
+\pard\ul\b TO INSTALL THE PROGRAM\ulnone\b0\par
+\par
+First install WeatherLink 5.5 (or later) or upgrade an earlier version. \par
+\par
+If you do not already have WeatherLink version 5.5, you can upgrade from versions 5.0 - 5.4 \par
+\par
+Remember the directory that WeatherLink 5.5 is installed to.\par
+\par
+\b Quit WeatherLink before installing an Expansion Module.\par
+\b0\par
+From the CD:\par
+Place the Install Disk in your CD ROM drive\par
+The install program should start automatically. If the install program does not start, \par
+choose Run from the Start menu, type D:SETUP (or E:SETUP, substituting the correct \par
+drive letter for D or E), and choose OK to begin the installation.\par
+Follow the on screen prompts.\par
+\par
+Select the directory that WeatherLink 5.5 (or later) is installed in.\par
+\par
+This module will be installed into a subdirectory named Expansion_Modules, which will be created if it does not already exist.\par
+\par
+\ul\b Module Help Information\par
+\ulnone\b0\par
+For help on using this module, look for "Email/Phone Alert Help..." in the WeatherLink Help menu.\par
+\par
+To see a list of the installed expansion modules, bring up the "About WeatherLink" command on the Help menu or the "Manage Modules" command on the File menu.\par
+\f1\fs18\par
+\ul\b\f0\fs20 Format of the Expansion_Modules\\ModuleList.dat file\par
+\ulnone\b0\f2\par
+The file named ModuleList.dat in the directory Expansion_Modules, if it exists, tells WeatherLink which expansion modules to install. Each line of this text file lists information about one module, including whether or not to install it. WeatherLink will install the modules in the order listed in this file.\par
+\par
+The file format is:\par
+<module file name> <module ID number> <module version> <load Flag> <full module name>\par
+\par
+<module file name> is the name of the DLL file that contains the expansion module.\par
+\pard\fi-720\li720 <module ID number> is an ID number that uniquely idetifies each module. The file name may change with diferent versions, but the ID will remain the same. This value is in hex.\par
+<module version> is the version of the module installed. This is also in hex. for example 0x00010203 = version 1.2.3.\par
+<load Flag> will either be "1" if the module should be loaded by WeatherLink or "0" if the module should not be loaded by WeatherLink\par
+<full module name> is the module nane, version, and date that appears in the WeatherLink About box for this module\par
+\par
+\pard\par
+For example the entry for the Email/Phone Alert Module looks like:\par
+\par
+\f3 EmailAlertModule.dll 0x00000600 0x00010002 1 E-mail Alert Module v.1.0  02/03/2004\par
+\f2\par
+Where:\par
+<module file name> = "EmailAlertModule.dll" \par
+<module ID number> = 0x000000600\par
+<module version> = 0x00010002 - version 1.0.2\par
+<load Flag> = 1 = Load this module\par
+<full module name> = "E-mail Alert Module v.1.0  02/03/2004"\par
+\par
+It is safe to delete lines or to change the order of lines (to change the order that modules are loaded into WeatherLink). If you wish to add a new module to the list, put the module file name on a line by itself. The next time WeatherLink is started, WeatherLink will try to load the module. If it is successfully loaded, the rest of the information will be added automatically by WeatherLink.\par
+\par
+\b The Module Management function under the File menu in WeatherLink will perform the same functions.\par
+\b0\par
+}
+ 

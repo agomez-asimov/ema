@@ -1,0 +1,54 @@
+<HTML>
+<HEAD>
+<meta http-equiv="refresh" content="150";>
+<TITLE>Current Conditions</TITLE>
+</HEAD>
+<BODY background="Clouds.jpg">
+<P><FONT size=4></FONT></P>
+<P>
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="90%" align=center 
+ height=50 >
+ 
+</TABLE></P>
+<P align=center><FONT size=5  color=darkred><STRONG><A NAME = "Current">Current 
+Conditions</A></STRONG></FONT></P>
+<P align=center><FONT size=4  color=darkred><STRONG><A NAME = "Current">As of:  <!--Date--> <!--Time-->
+</A></STRONG></FONT></P><TABLE  cellspacing=1 cellpadding=0 width="85%" 
+ align=center  border=1>
+  
+  <TR height=20>
+   <TD Width="33%"><STRONG><FONT face="Tw Cen MT">Inside Temperature:</FONT></STRONG></TD>
+    <TD Width="22%" align=left> <b> <!--insideTemp--><!--tempUnit--></b></TD>
+    <TD Width="33%"><STRONG><FONT face="Tw Cen MT">Inside Humidity:</FONT></STRONG></TD>
+  <TD Width="11%" align=left><b><!--insideHumidity--><!--humUnit--></b></TD>
+  </TR>
+   <TR height=20>
+   <TD Width="15%"><STRONG><FONT face="Tw Cen MT">Barometer:</FONT></STRONG> </TD>
+    <TD Width="18%" align=left><b> <!--barometer-->&nbsp;<!--barUnit--> and <!--BarTrend--></b></TD>
+    <TD Width=200><STRONG><FONT face="Tw Cen MT">Inside Heat Index:</FONT></STRONG></TD>
+  <TD Width=100 align=left><b><!--insideHeatIndex--><!--tempUnit--></b></TD>
+  </TR>
+  <TR height=20>
+   <TD Width=200><STRONG><FONT face="Tw Cen MT">Inside Dewpoint:</STRONG></FONT></TD>
+    <TD Width=100 align=left> <b> <!--insideDewPt--><!--tempUnit--></b></TD>
+    <TD Width=200><STRONG><FONT face="Tw Cen MT">EMC:</FONT></STRONG></TD>
+  <TD Width=100 align=left><b><!--emc--> <!--emcUnit--></b></TD>
+  </TR>
+  <TR height=20>
+   <TD Width=200><STRONG><FONT face="Tw Cen MT">Air Density:</STRONG></FONT></TD>
+    <TD Width=100 align=left> <b> <!--airDensity--> <!--airDensityUnit--></b></TD>
+  </TR>
+ </TABLE>
+<br>
+<P align=center><FONT size=4  color=darkred><STRONG><A NAME = "Current">Sunrise:  <!--sunriseTime-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sunset:  <!--sunsetTime-->
+</A></STRONG></FONT></P>  <TABLE align=center>
+  <TR width="100%"><TD>
+  <font size = 4 face="verdana,arial" color=darkred><STRONG>This Site Powered by:</STRONG></font></TD></TR>
+<TR align=center><TD>
+<a href="http://www.davisnet.com" target=HI><img src="Davis Logo.jpg"></a></TD></TR>
+</TABLE>
+    
+
+</BODY>
+</HTML>
+

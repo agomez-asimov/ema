@@ -1,0 +1,114 @@
+<HTML>
+<HEAD>
+<TITLE>Current Weather Conditions at <!--StationCity-->, <!--StationState--></TITLE>
+</HEAD>
+<meta http-equiv="refresh" content="150";>
+<BODY bgcolor=PaleGoldenrod>
+
+<table border="1" bordercolordark="#000000" bordercolorlight="#000000"  cellpadding=2 cellspacing=2>
+<tr height="30">
+ <td align=center bordercolor="#000000" colspan="2"
+ style="border: thin solid rgb(0,0,0)"><a href="http://www.davisnet.com" target=HI><img src="Davis Logo.jpg" alt="Davis Logo"></a></td>
+<td width="700">
+<center>
+<applet
+CODE="davisticker.class"
+width=680
+height=38 VIEWASTEXT>
+<param name=string  value="Sunrise:  <!--sunriseTime-->     Sunset:  <!--sunsetTime-->">
+<param name=dataInterval value=1000>
+<param name=font value="Arial">
+<param name=style value="Plain">
+<param name=size value=15>
+<param name=fps value=150>
+<param name=borWidth value=3>
+<param name=borColor value=153,000,051>
+<param name=backColor value=255,255,000>
+<param name=fontColor value=000,000,000>
+
+
+</applet>
+</center>
+</td>
+ </tr>
+ <tr>
+<td bordercolor="#000000" bgcolor="#000000" colspan="2"
+ style="border: thin solid rgb(0,0,0)"><font face="verdana, Arial, Helvetica"><strong><font color="#A8B8C8"><big>Current
+Weather at <!--StationCity-->, <!--StationState--></big></font></strong></font></td>
+  <td nowrap bordercolor="#000000" style="border: thin solid rgb(0,0,0)" rowspan="10" valign="top" align="center"
+ bgcolor="#73ADD6"><font face="verdana, Arial, Helvetica">
+<p align=center><img src="OutsideTemp.gif" alt="Current Outside Temperature">&nbsp;&nbsp;<img src="WindDirection.gif" alt="Current Wind Direction">&nbsp;&nbsp;<img src="WindSpeed.gif" alt="Current Wind Speed">&nbsp;&nbsp;<img src="WindChill.gif" alt="Current Wind Chill"></p><br>
+<p align=center><img src="Rain.gif" alt="Today's Rain">&nbsp;&nbsp;<img src="OutsideTempHistory.gif" alt="Outside Temp History">&nbsp;&nbsp;<img
+ src="YearlyRain.gif" alt="Yearly Total Rain"></p><br>
+</font>
+</td>
+  </tr>
+ <tr>
+<td bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><small><strong><font color=Brown>Temperature</font></strong><br></small></font></td>
+ <td width="150" bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><small><font color="#3366FF"><!--outsideTemp--><!--tempUnit--></font><br></small></strong></font>
+</td></tr>
+ <tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><font color=Brown><small>Wind<br></small></font></strong></font></td>
+ <td bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><font color="#3366FF"><small><!--windDirection--> at <!--windSpeed--> <!--windUnit--><br></small></font></strong>
+</font></td>
+ </tr>
+ <tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><small><strong><font color=Brown>Today's Rain</font></strong><br></small></font></td>
+ <td bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><small><font color="#3366FF"><!--dailyRain-->&nbsp;<!--rainUnit--></font><br></small></strong></font>
+</td>
+ </tr>
+<tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><small><strong><font color=Brown>Yearly Rain</font></strong><br></small></font></td>
+ <td bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><small><font color="#3366FF"><!--totalRain-->&nbsp;<!--rainUnit--></font><br></small></strong></font>
+</td>
+ </tr>
+<tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><font color=Brown><small>Wind Chill<br></small></font></strong></font></td>
+ <td bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><font color="#3366FF"><small><!--windChill--><!--tempUnit--><br></small></font></strong></font>
+</td>
+ </tr> 
+ <tr>
+ <td bordercolor="#000000" bgcolor="#000000" colspan="2"
+ style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial, Helvetica"><strong><font color="#A8B8C8">
+<big>Highs and Lows</big></font></strong></font></td>
+ </tr>
+ <tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana, Arial,
+ Helvetica"><strong><small><font color=#228b22><p>High Temperature</p><p>Low Temperature</p></font></small></strong></font>
+</td>
+ <td align=left bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana,
+ Arial, Helvetica"><strong><font color=#ff4500><small><p><!--hiOutsideTemp--><!--tempUnit--><font color=#228b22>&nbsp;
+&nbsp;at&nbsp;&nbsp;</font><font color=#ff4500>
+ <!--hiOutsideTempTime--></font></p><p><!--lowOutsideTemp--><!--tempUnit--><font color=#228b22>&nbsp;&nbsp;at&nbsp;
+&nbsp;</font><font color=#ff4500><!--lowOutsideTempTime--></font></p></small></font></strong></font></td>
+ </tr>
+  <tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)"  valign=middle><font face="verdana,
+ Arial, Helvetica"><font color=#228b22><strong><small><p>High Wind Speed</p></small></strong></font></font></td>
+ <td align=left bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana,
+ Arial, Helvetica"><strong><font color=#ff4500><small><p><!--hiWindSpeed-->&nbsp;<!--windUnit--><font color=#228b22>&nbsp;
+&nbsp;at&nbsp;&nbsp;</font><font color=#ff4500><!--hiWindSpeedTime--></font></p></small></font></strong></font></td>
+
+<tr>
+ <td  bordercolor="#000000" style="border: thin solid rgb(0,0,0)"  valign=middle><font face="verdana,
+ Arial, Helvetica"><strong><font color=#228b22><small><p>Low Wind Chill</p></small></font></strong></font></td>
+ <td align=left bordercolor="#000000" style="border: thin solid rgb(0,0,0)" ><font face="verdana,
+ Arial, Helvetica"><strong><font color=#ff4500><small><p><!--lowWindchill--><!--tempUnit--><font color=#228b22>&nbsp;
+&nbsp;at&nbsp;&nbsp;</font><font color=#ff4500><!--lowWindchillTime--></font></p> </small></font></strong></font></td>
+ </tr>
+
+
+ </table>
+
+</BODY>
+</HTML>

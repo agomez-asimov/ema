@@ -1,0 +1,59 @@
+##############################################
+# this variable stores the Vantage serial port
+##############################################
+SERIAL_PORT=1
+
+##############################################
+# this variable stores the Vantage serial port
+##############################################
+BAUD_RATE=19200
+
+##############################################
+# this variable represents the Working directory
+##############################################
+WORKING_DIRECTORY=
+
+
+##############################################
+# this variable represents irrigation module rain unit type
+##############################################
+IRRIGATION_RAIN=1
+
+
+##############################################
+# this variable represents irrigation module rain-rate unit type
+##############################################
+IRRIGATION_RAIN_RATE=5
+
+##############################################
+# this variable represents Alarm Output Module temp unit
+##############################################
+AOM_TEMP_UNIT=3
+
+##############################################
+# this variable represents Alarm Output Module barometer unit
+##############################################
+AOM_BAR_UNIT=1
+
+##############################################
+# this variable represents Alarm Output Module wind unit
+##############################################
+AOM_WIND_UNIT=7
+
+##############################################
+# this variable represents Alarm Output Module rain unit
+##############################################
+AOM_RAIN_UNIT=1
+
+##############################################
+# Alarm Output Module Station Config Parameters
+##############################################
+AOM_STATION_CONFIG=0$
+
+##############################################
+# Determines if the Alarm Output Module has been used 
+# If this is the first time the AOM has been used, the
+# station configuration will pop up.
+# 0 - First Use  1 - Has been used before
+##############################################
+AOM_FIRST_USE=0

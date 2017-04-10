@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>MB1LR - Celular</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<p><font face="Arial" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <u><b><!--StationName-->
+<!--stationCity--></b></u><br>
+<br>
+Long: <!--StationLongitude--><br>
+Lat:  <!--StationLatitude--><br>
+Alt:  <!--StationElevation--><br>
+.................................................<br>
+<!--stationDate-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--stationTime--><br>
+<br>
+Temp.Actual&nbsp;   <!--outsideTemp--><!--tempUnit--> <br>
+Mínima&nbsp;  <!--lowOutsideTemp--><!--tempUnit--><br>
+  a las&nbsp; <!--lowOutsideTempTime--><br>
+Máxima&nbsp;  <!--hiOutsideTemp--><!--tempUnit--><br>
+  a las&nbsp; <!--hiOutsideTempTime--><br><br>
+Humedad Actual&nbsp; <!--outsideHumidity--><!--humUnit--><br>
+Mínima&nbsp;  <!--lowHumidity--><!--humUnit--><br>
+  a las&nbsp; <!--lowHumTime--><br>
+Máxima&nbsp;  <!--hiHumidity--><!--humUnit--><br>
+  a las&nbsp; <!--hiHumTime--><br><br>
+Sens. Térmica <i>(T&V)&nbsp;</i> <!--windChill--><!--tempUnit--><br>
+Sens. Térmica <i>(T&H)&nbsp;<!--outsideHeatIndex--> <!--tempUnit--></i><br><br>
+Viento del&nbsp; <!--windDirection-->(<!--windDir-->) <br>
+a <!--windSpeed--><!--windUnit--><br>
+Velocidad Máxima&nbsp;<!--hiWindSpeed--> <!--windUnit--><br>
+  a las&nbsp; <!--hiWindSpeedTime--><br><br>
+Lluvia Diaria&nbsp; <!--dailyRain--><!--rainUnit--><br>
+Intensidad&nbsp; <!--RainRate--><!--rainUnit--><br>
+Lluvia Mensual&nbsp; <!--monthlyRain--><!--rainUnit--><br>
+Lluvia Anual&nbsp; <!--totalRain--><!--rainUnit--><br><br>
+Presión &nbsp; <!--barometer--> <!--barUnit--><br><br>
+<br>
+
+.................................................<br>
+&nbsp;<font face="Arial" size="2" color="#000000"><b>©</b></font><b><font face="Arial" size="2" color="#000080">
+<a href="http://www.mercobras.com.ar" target="_blank">www.mercobras.com.ar</a></font></b></font></p>
+<p>&nbsp;</p>
+</body>
+</html>

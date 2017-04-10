@@ -1,0 +1,27 @@
+
+                       Leap Year Correction
+                       --------------------
+
+    We are in a leap year and and your weather station clock does not keep 
+track of leap years.  It will read 3-1 on 2-29.  You should not try to 
+change the date on the weather station.  There are two possible scenarios 
+depending on whether or not your computer does keep track of leap years. 
+On or after 2-29 you must determine if your computer has the correct date.
+
+            Scenario One:  My computer has the correct date.
+            ------------------------------------------------
+    You can download on or after 2-29 and the program will correct the data 
+for you.  The program will tell you when it is ok to correct the date on 
+the weather station.  Until that time, the Weatherlink will keep the data 
+straight.
+
+        Scenario Two:  My computer does not have the correct date.
+        ----------------------------------------------------------
+    On 2-29 you should not download any data.  Your computer and your weather 
+station will both say 3-1.  Anytime after 2-29 you should first set the correct 
+date on your PC.  Go into your Weatherlink program and download your data.  
+Answer 'Yes' to the 'Should I correct your data for leap year?' prompt. Set 
+the correct date on your weather station using the program.  Clear your archive 
+memory.  The software will automatically  correct the data for you.
+
+    Note, this message window will no longer appear after March 1.

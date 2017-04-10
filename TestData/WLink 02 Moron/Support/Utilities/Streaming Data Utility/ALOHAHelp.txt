@@ -1,0 +1,10 @@
+Logger Type - The software indicates the logger type and firmware revision level of the streaming data logger in the logger type box.
+
+Station ID # - Choose a station ID number for your station and enter it into the Station ID # dialog box.  The default is 1.  The allowable range is 0 to 999.  Although a station ID number is included in each data transmission, ALOHA® does not use this value.  It is recommended that you use a different value for each station if you are using more than 1 Vantage Pro station for emergency operations.
+
+Time Out Period - Normally, the streaming data logger will stream an ASCII character string every 30 seconds to the computer for use with the ALOHA® software program.  However, since the streaming data logger shares its serial port for Vantage Pro, WeatherLink® and ALOHA® communications, it ceases streaming whenever PC software attempts to communicate to the logger.  After communications from the PC has stopped for the time-out-period, the Aloha streaming will resume.  The default setting is 5 seconds.  You may adjust this value if you wish streaming to resume sooner or later after communicating to the logger using WeatherLink® or the Streaming Data Utility.
+
+Note:  Once communications to WeatherLink are initiated and successful, the streaming data logger will be unable to communicate with the Streaming Data Utility until the Time Out Period expires.  If you need to communicate to the logger with both the Streaming Data Utility and WeatherLink®, you should communicate using the Streaming Data Utility first. 
+
+Default - Press this button to restore the data entries to their default values. You must still hit OK to save the settings in the data logger.
+ 
