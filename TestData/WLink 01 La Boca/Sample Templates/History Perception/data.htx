@@ -1,7 +1,0 @@
-Current Indoor Conditions:     Inside Temperature <!--insideTemp--><!--tempUnit-->     
-Inside Humidity <!--insideHumidity--> <!--humUnit-->     
-Barometer <!--barometer--> <!--barUnit--> & <!--BarTrend-->
-Inside Heat Index <!--insideHeatIndex--><!--tempUnit-->     
-Inside Dewpoint <!--insideDewPt--><!--tempUnit-->     
-EMC <!--emc--> <!--emcUnit-->     
-Air Density <!--airDensity--> <!--airDensityUnit-->          Sunrise:     <!--sunriseTime-->     Sunset:     <!--sunsetTime-->

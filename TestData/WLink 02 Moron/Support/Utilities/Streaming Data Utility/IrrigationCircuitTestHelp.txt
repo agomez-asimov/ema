@@ -1,9 +1,0 @@
-Circuit Test
-
-Pressing the Circuit Test button puts the Irrigation data logger into Circuit Test mode.  In this mode, all other functions of the data logger cease.  Do not press this button unless you wish to perform a test because it may disrupt the behavior of your Irrigation system.
- 
-This function is used to test the output of the Irrigation logger. Push the button of the output you want to test (Wind, Rain, ET, or Alarm).  The button will be depressed to indicate Closed circuit mode and raised to indicate Open circuit mode.  To utilize this function effectively, you will need to connect a device to the appropriate output so that you can tell whether it is turning on or off.
-
-You can connect a voltmeter or continuity tester to the outputs and see if the output changes state (high for closed or low for open).  You may also connect your irrigation controller to one or more of the outputs.  If you utilize Industrial mode, check to see that the controller receives the data correctly (Rain, ET and/or Wind pulses).  If you use Residential mode, put your controller in manual mode and run the sprinklers and check to see that the sprinklers run when the ET circuit is closed and doesn’t run when the ET circuit is open.  Additionally, if you wire the alarm circuit to the irrigation controller, you can check to see if the sprinklers run with the Alarm circuit closed or fail to run with the Alarm circuit open.  When wired in series with the ET function either the ET function or the Alarm function should cause the same behavior when either of the circuits is closed (or open).  When wired in parallel, both circuits must be closed (or open) to cause the same behavior.
-
-To leave this mode, simply exit the dialog box by pressing the OK button.  You must hit OK in the main dialog box to return the datalogger to its original settings.

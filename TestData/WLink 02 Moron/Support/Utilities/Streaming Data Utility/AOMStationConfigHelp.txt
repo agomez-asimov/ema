@@ -1,7 +1,0 @@
-Before setting alarms, use this function to indicate what sensors you have with your Vantage Pro or Vantage Pro2 system.  The Configuration Utility uses your choices to determine what parameters to show in the list.  Note that you can only enter this dialog box when no alarms are set.  This prevents a user from hiding a parameter that is set as an alarm condition.
-
-Selecting Vantage Pro Plus automatically checks the Solar Radiation and UV check boxes.  You can also check them separately.
-
-The Leaf Wetness, Soil Moisture, Leaf Temperature, and Soil Temperature selections refer to the sensors on the Leaf & Soil Moisture Temperature Station or Soil Moisture/Temperature Station.  Temp 1, Temp 2, Humidity 1, Humidity 2 refer to the sensors on the Wireless Temperature or Wireless Temperature/Humidity Stations.  Indicate the sensor by selecting the number that corresponds to the transmitter ID on your Wireless Temperature or Temperature/Humidity Station.  Please note that the Alarm Output data logger makes no distinction between Vantage Pro and Vantage Pro2.
-
-The temperature and humidity readings are numbered according to their station transmitter ID.  So, for example, if you have an ISS on Transmitter ID # 1 and a Temperature/Humidity Station on ID # 4, and a Temperature Station on ID # 2, you would check Temp 4, Humidity 4 and Temp 2.  There is no need to indicate your ISS Temperature and Humidity sensors because they always appear under “Outside Temperature” and “Outside Humidity” in the parameter pick list.
