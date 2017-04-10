@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="EMA" transaction-type="RESOURCE_LOCAL">
+		<class>ar.asimov.acumar.ema.model.converter.LocalDateConverter</class>
+		<class>ar.asimov.acumar.ema.model.converter.LocalTimeConverter</class>
+		<class>ar.asimov.acumar.ema.model.Station</class>
+		<class>ar.asimov.acumar.ema.model.WeatherMeasure</class>
+		<class>ar.asimov.acumar.ema.model.DailySummary</class>
+		<class>ar.asimov.acumar.ema.model.SoilTemperature</class>
+		<class>ar.asimov.acumar.ema.model.ListParameterValue</class>
+		<class>ar.asimov.acumar.ema.model.LeafTemperature</class>
+		<class>ar.asimov.acumar.ema.model.SoilMoisture</class>
+		<class>ar.asimov.acumar.ema.model.LeafWetness</class>
+		<class>ar.asimov.acumar.ema.model.ExtraTemperature</class>
+		<class>ar.asimov.acumar.ema.model.ExtraHumidity</class>
+		<class>ar.asimov.acumar.ema.model.NewSensor</class>
+		<class>ar.asimov.acumar.ema.model.converter.LocalDateTimeConverter</class>
+		<class>ar.asimov.acumar.ema.model.Configuration</class>
+		<class>ar.asimov.acumar.ema.model.WeatherSummary</class>
+		<class>ar.asimov.acumar.ema.model.WindDistributionEntry</class>
+		<properties>
+			<property name="javax.persistence.schema-generation.database.action" value="create"/>
+			<property name="eclipselink.ddl-generation" value="create-tables"/>
+			<property name="eclipselink.ddl-generation.output-mode" value="database"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://192.168.3.17:3306/centrales"/>
+			<property name="javax.persistence.jdbc.user" value="ema"/>
+			<property name="javax.persistence.jdbc.password" value="Ema+1806$"/>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+			<property name="javax.persistence.sql-load-script-source" value="META-INF/sql/data.sql"/>
+		</properties>
+	</persistence-unit>
+</persistence>
