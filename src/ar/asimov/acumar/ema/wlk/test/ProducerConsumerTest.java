@@ -43,7 +43,7 @@ public class ProducerConsumerTest {
 			WeatherDataProducer producer =new WeatherDataProducer(station,this.measures);
 			producers.add(producer);
 			threads.add(new Thread(producer));
-			WeatherDataConsumer consumer = new WeatherDataConsumer(this.measures);
+			WeatherDataConsumer consumer = new WeatherDataConsumer(this.measures,10000);
 			consumers.add(consumer);
 			threads.add(new Thread(consumer));
 		}

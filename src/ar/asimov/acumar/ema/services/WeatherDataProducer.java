@@ -57,11 +57,13 @@ public class WeatherDataProducer implements Runnable {
 	@Override
 	public void run() {
 		this.running = true;
-		try {
+		try { 
 			Path path = Paths.get(this.getStation().getDbPath());
-			if (path.toFile().isDirectory()) {
+			if (path.toFile().isDirectory()) {			
+				//Abro el directorio especificado en Station.getDbPath()
 				DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.wlk");
 					for (Path wlkFile : stream) {
+						//Recorro todos los archivos .wlk del directorio
 						WLinkFileReader reader = new WLinkFileReader(wlkFile.toString());
 						this.getLogger().debug(Thread.currentThread().getName() + ": " + "Reading "
 								+ wlkFile.getFileName().toString());
@@ -82,7 +84,7 @@ public class WeatherDataProducer implements Runnable {
 								DailyWeatherData record = reader.read(i, j);
 								WeatherMeasure measure = this.fromFileRecord(record);
 								this.produce(measure);
-								this.getStation().setLastProcessedRecords(j);
+								this.produced++;
 							}
 							this.getStation().setLastProcessedDate(reader.getFilePeriod().atDay(i));
 						}
@@ -108,6 +110,7 @@ public class WeatherDataProducer implements Runnable {
 			this.measures.notifyAll();
 		}
 	}
+	
 
 	private WeatherMeasure fromFileRecord(DailyWeatherData record) {
 		WeatherMeasure measure = new WeatherMeasure();

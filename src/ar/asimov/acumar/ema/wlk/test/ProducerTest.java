@@ -33,8 +33,8 @@ public class ProducerTest {
 		for(Station station : stations){
 			threads.add(new Thread(new WeatherDataProducer(station, this.queue),"La Boca Producer"));
 		}
-		Thread c1 = new Thread(new WeatherDataConsumer(this.queue),"Consumer 1");
-		Thread c2 = new Thread(new WeatherDataConsumer(this.queue),"Consumer 2");
+		Thread c1 = new Thread(new WeatherDataConsumer(this.queue,1000),"Consumer 1");
+		Thread c2 = new Thread(new WeatherDataConsumer(this.queue,1000),"Consumer 2");
 		threads.add(c1);
 		threads.add(c2);
 		for(Thread thread : threads){

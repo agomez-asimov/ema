@@ -21,29 +21,15 @@ public class WeatherDataConsumer implements Runnable {
 	private final Log logger;
 	private Short exitCode;
 	private boolean running;
-	private boolean commit;
+	private int limit;
 	
-	public WeatherDataConsumer(Queue<WeatherMeasure> sharedQueue) {
+	public WeatherDataConsumer(Queue<WeatherMeasure> sharedQueue,int limit) {
 		this.measures = sharedQueue;
 		this.stop = false;
 		this.logger = LogFactory.getLog(this.getClass());
 		this.exitCode = 0;
 		this.running = false;
-		this.commit = false;
 		this.consumed= new HashMap<>();
-	}
-	
-	protected void registerStation(Station station){
-		this.setConsumed(station, 0);
-	}
-	
-	public Integer getConsumed(Station station){
-		if(!this.consumed.containsKey(station)) this.registerStation(station);
-		return this.consumed.get(station);
-	}
-	
-	public void setConsumed(Station station,Integer consumed){
-		this.consumed.put(station, consumed);
 	}
 	
 	protected Log getLogger(){
@@ -58,29 +44,20 @@ public class WeatherDataConsumer implements Runnable {
 	public void run() {
 		this.running = true;
 		Integer totalConsumed = 0;
-		Map<Station,Integer> processInfo = new HashMap<>();
+		boolean commit = false;
 		//EntityManagerHelper.beginTransaction();
 		try{
-			while(!this.stop){
-				if(!this.commit){
-					EntityManagerHelper.beginTransaction();
-				}
+			EntityManagerHelper.beginTransaction();
+			while(!this.stop && !this.measures.isEmpty()){
 				WeatherMeasure consumed = this.consume();
-				this.commit = (totalConsumed == COMMIT_TRANSACTION_LIMIT);
 				if(null == consumed){
 					this.getLogger().info("Null object encountered");
 				}else{
 					EntityManagerHelper.getEntityManager().persist(consumed);
-					processInfo.put(consumed.getStation(),processInfo.get(consumed.getStation())+1);
 				}
 				Thread.sleep(50);
-				if(this.commit){
+				if(commit){
 					EntityManagerHelper.commitTransaction();
-					for(Station station : processInfo.keySet()){
-						this.setConsumed(station, this.getConsumed(station)+processInfo.get(station));
-					}
-					processInfo.clear();
-					this.commit = false;
 				}
 				if(this.getLogger().isDebugEnabled()){
 					this.getLogger().debug(Thread.currentThread().getName()+": "+"Persisting "+consumed);
@@ -91,7 +68,6 @@ public class WeatherDataConsumer implements Runnable {
 			this.getLogger().fatal("An InterruptedException happened",e);
 			this.exitCode = 1;
 			EntityManagerHelper.rollbackTransaction();
-			processInfo.clear();
 		}finally{
 			EntityManagerHelper.closeEntityManager();
 			this.running = false;

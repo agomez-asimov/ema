@@ -38,8 +38,13 @@ public class StationDAO {
 		return tq.getResultList();
 	}
 	
+	public void create(Station station){
+		this.entityManager.persist(station);
+	}
+	
 	public void update(Station station){
 		this.entityManager.merge(station);
 	}
+		
 
 }

@@ -46,7 +46,7 @@ public class WeatherController implements Runnable{
 		final List<Thread> threads = new ArrayList<>();
 		for(Station station : stations){
 			WeatherDataProducer producer = new WeatherDataProducer(station, measures);
-			WeatherDataConsumer consumer = new WeatherDataConsumer(measures);
+			WeatherDataConsumer consumer = new WeatherDataConsumer(measures,1000);
 			producers.add(producer);
 			threads.add(new Thread(producer));
 			threads.add(new Thread(consumer));

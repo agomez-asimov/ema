@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -41,14 +42,21 @@ public final class WLinkFileReader{
 	private final Map<Integer,SoftReference<DailySummaryData>> dailySummaryCache;
 	private final Map<Integer,Map<Integer,SoftReference<DailyWeatherData>>> dailyWeatherDataCache;
 	
-
-	public WLinkFileReader(String file) throws IOException {
-		this.file = new File(file);
+	public WLinkFileReader(Path path) throws IOException{
+		this(path.toFile());
+	}
+	
+	public WLinkFileReader(File file) throws IOException{
+		this.file = file;
 		this.byteChannel = Files.newByteChannel(this.file.toPath(),StandardOpenOption.READ);
 		this.dailySummaryCache = new LinkedHashMap<>();
 		this.dailyWeatherDataCache = new LinkedHashMap<>();
 		this.header = readHeader(this.byteChannel);
 		this.fileDate = YearMonth.parse(FilenameUtils.removeExtension(this.file.getName()),DateTimeFormatter.ofPattern("y-M"));
+	}
+
+	public WLinkFileReader(String file) throws IOException {
+		this(new File(file));
 	}
 	
 		
