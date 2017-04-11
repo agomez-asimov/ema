@@ -1,94 +1,99 @@
 package ar.asimov.acumar.ema.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherMeasure;
+import ar.asimov.acumar.ema.model.dao.WeatherMeasureDAO;
 import ar.asimov.acumar.ema.model.helper.EntityManagerHelper;
 
 public class WeatherDataConsumer implements Runnable {
-	
-	private static final int COMMIT_TRANSACTION_LIMIT = 1000;
-	
+
 	private Queue<WeatherMeasure> measures;
-	private Map<Station,Integer> consumed;
+	private Map<Station,ProcessInformation> processInfo;
 	private boolean stop;
-	private final Log logger;
-	private Short exitCode;
 	private boolean running;
-	private int limit;
-	
-	public WeatherDataConsumer(Queue<WeatherMeasure> sharedQueue,int limit) {
+	private int processLimit;
+	private int consumed;
+
+	public WeatherDataConsumer(Queue<WeatherMeasure> sharedQueue, int processLimit) {
 		this.measures = sharedQueue;
 		this.stop = false;
-		this.logger = LogFactory.getLog(this.getClass());
-		this.exitCode = 0;
 		this.running = false;
-		this.consumed= new HashMap<>();
-	}
-	
-	protected Log getLogger(){
-		return this.logger;
-	}
-	
-	public short getExitCode(){
-		return (this.running)?null:this.exitCode;
+		this.processLimit = processLimit;
+		this.consumed = 0;
+		this.processInfo = new HashMap<>();
 	}
 
 	@Override
 	public void run() {
 		this.running = true;
-		Integer totalConsumed = 0;
 		boolean commit = false;
-		//EntityManagerHelper.beginTransaction();
-		try{
+		// EntityManagerHelper.beginTransaction();
+		final WeatherMeasureDAO measures = new WeatherMeasureDAO(EntityManagerHelper.getEntityManager());
+		try {
 			EntityManagerHelper.beginTransaction();
-			while(!this.stop && !this.measures.isEmpty()){
+			final List<WeatherMeasure> localConsumed = new ArrayList<>();
+			while (!this.stop && !this.measures.isEmpty() && !commit) {
 				WeatherMeasure consumed = this.consume();
-				if(null == consumed){
-					this.getLogger().info("Null object encountered");
-				}else{
-					EntityManagerHelper.getEntityManager().persist(consumed);
-				}
+				measures.create(consumed);
+				localConsumed.add(consumed);
+				commit = (this.consumed == this.processLimit);
 				Thread.sleep(50);
-				if(commit){
-					EntityManagerHelper.commitTransaction();
-				}
-				if(this.getLogger().isDebugEnabled()){
-					this.getLogger().debug(Thread.currentThread().getName()+": "+"Persisting "+consumed);
-				}
 			}
-			//EntityManagerHelper.commitTransaction();
-		}catch(InterruptedException e){
-			this.getLogger().fatal("An InterruptedException happened",e);
-			this.exitCode = 1;
+			EntityManagerHelper.commitTransaction();
+			for(WeatherMeasure m : localConsumed){
+				if(!this.processInfo.containsKey(m.getStation())){
+					this.processInfo.put(m.getStation(), new ProcessInformation());
+				}
+				ProcessInformation info = this.processInfo.get(m.getStation());
+				if(info.getLastProcessedDate() == null || info.getLastProcessedDate().isBefore(m.getDate())){
+					info.setLastProcessedDate(m.getDate());
+					info.setLastProcessedRecords(1);
+				}else if(info.getLastProcessedDate().equals(m.getDate())){
+					info.setLastProcessedRecords(info.getLastProcessedRecords()+1);
+				}
+				info.setTotalProcessed(info.getTotalProcessed()+1);
+			}
+		} catch (InterruptedException e) {
 			EntityManagerHelper.rollbackTransaction();
-		}finally{
+			throw new RuntimeException(e);
+		} finally {
 			EntityManagerHelper.closeEntityManager();
 			this.running = false;
 		}
 	}
 
-	
-	protected WeatherMeasure consume() throws InterruptedException{
-		while(this.measures.isEmpty()){
-			synchronized(this.measures){
+	protected WeatherMeasure consume() throws InterruptedException {
+		while (this.measures.isEmpty()) {
+			synchronized (this.measures) {
 				this.measures.wait();
 			}
 		}
-		synchronized(this.measures){
+		synchronized (this.measures) {
 			this.measures.notifyAll();
 			return this.measures.poll();
 		}
 	}
-	
-	public void stop(){
+
+	public Integer getConsumed(Station station) {
+		return this.consumed;
+	}
+
+	public Map<Station,ProcessInformation> getProcessInformation(){
+		return this.processInfo;
+	}
+
+	public void stop() {
 		this.stop = true;
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 }

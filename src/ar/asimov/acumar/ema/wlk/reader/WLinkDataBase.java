@@ -100,7 +100,7 @@ public class WLinkDataBase {
 	
 	public Integer getRecordsInDay(LocalDate date){
 		if(this.contains(date)){
-			return this.getReader(YearMonth.from(date)).recordsInDay(date.getDayOfMonth());
+			return this.getReader(YearMonth.from(date)).getRecordsInDay(date.getDayOfMonth());
 		}else{
 			return 0;
 		}

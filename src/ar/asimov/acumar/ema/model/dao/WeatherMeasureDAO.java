@@ -82,6 +82,12 @@ public class WeatherMeasureDAO {
 		}
 		return tq.getResultList().size();
 	}
+
+
+	public void create(WeatherMeasure weatherMeasure) {
+		this.entityManager.persist(weatherMeasure);
+		
+	}
 	
 }
 

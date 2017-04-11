@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -90,7 +91,8 @@ public class WeatherSummary implements Serializable {
 	@Column(name="date")
 	private LocalDate date;
 	@Id
-	@Column(name="station_id")
+	@ManyToOne
+	@JoinColumn(name="station_id", referencedColumnName="station_id")
 	private Station station;
 	
 	/**

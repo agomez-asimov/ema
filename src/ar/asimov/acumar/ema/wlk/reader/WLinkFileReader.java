@@ -34,7 +34,7 @@ public final class WLinkFileReader{
 	private final int WEATHER_DATA_TYPE = 1;
 	
 	private final File file;
-	private final YearMonth fileDate;
+	private final YearMonth period;
 	private final HeaderBlock header;
 
 	private final SeekableByteChannel byteChannel;
@@ -52,7 +52,7 @@ public final class WLinkFileReader{
 		this.dailySummaryCache = new LinkedHashMap<>();
 		this.dailyWeatherDataCache = new LinkedHashMap<>();
 		this.header = readHeader(this.byteChannel);
-		this.fileDate = YearMonth.parse(FilenameUtils.removeExtension(this.file.getName()),DateTimeFormatter.ofPattern("y-M"));
+		this.period = YearMonth.parse(FilenameUtils.removeExtension(this.file.getName()),DateTimeFormatter.ofPattern("y-M"));
 	}
 
 	public WLinkFileReader(String file) throws IOException {
@@ -86,7 +86,7 @@ public final class WLinkFileReader{
 				summary1.setByteBuffer(buffer, 0);
 				summary2.setByteBuffer(buffer,DATA_RECORD_SIZE);
 				if(summary1.dataType.get() == SUMMARY1_DATA_TYPE  && summary2.dataType.get() == SUMMARY2_DATA_TYPE){
-					DailySummaryData summary = DailySummaryData.from(this.fileDate.atDay(dayIndex),summary1,summary2);
+					DailySummaryData summary = DailySummaryData.from(this.period.atDay(dayIndex),summary1,summary2);
 					this.dailySummaryCache.put(dayIndex, new SoftReference<>(summary));
 					return summary;
 				}
@@ -109,7 +109,7 @@ public final class WLinkFileReader{
 				buffer.order(ByteOrder.LITTLE_ENDIAN);
 				record.setByteBuffer(buffer, 0);
 				if(record.dataType.get() == WEATHER_DATA_TYPE){
-					DailyWeatherData data = DailyWeatherData.from(this.fileDate.atDay(dayIndex), record);
+					DailyWeatherData data = DailyWeatherData.from(this.period.atDay(dayIndex), record);
 					if(!this.dailyWeatherDataCache.containsKey(dayIndex)){
 						this.dailyWeatherDataCache.put(dayIndex, new LinkedHashMap<>());
 					}
@@ -122,7 +122,7 @@ public final class WLinkFileReader{
 	}
 	
 	public YearMonth getFilePeriod(){
-		return this.fileDate;
+		return this.period;
 	}
 	
 	public boolean isEmpty(int dayIndex){
@@ -143,18 +143,14 @@ public final class WLinkFileReader{
 	}
 			
 	public boolean contains(LocalDate date){
-		return YearMonth.from(date).equals(this.fileDate) && this.header.dayIndex[date.getDayOfMonth()].recordsInDay.get() > 0;
+		return YearMonth.from(date).equals(this.period) && this.header.dayIndex[date.getDayOfMonth()].recordsInDay.get() > 0;
 	}
 	
-	public int recordsInDay(int dayIndex){
+	public int getRecordsInDay(int dayIndex){
 		int records = this.header.dayIndex[dayIndex].recordsInDay.get();
 		return (records>=2)?records-2:0;
 	}
 	
-	public int totalRecords(){
-		return this.header.totalRecords.get();
-	}
-
 	public synchronized DailySummaryData readDay(int dayIndex) throws IOException{
 		return this.readSummary(dayIndex,this.byteChannel);
 	}

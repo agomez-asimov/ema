@@ -71,7 +71,7 @@ public class WLinkFileReaderTest {
 		try{
 			YearMonth filePeriod = this.reader.getFilePeriod();
 			for(int i = 1;i<=filePeriod.atEndOfMonth().getDayOfMonth();i++){
-				for(int j = 0;j<this.reader.recordsInDay(i);j++){
+				for(int j = 0;j<this.reader.getRecordsInDay(i);j++){
 					DailyWeatherData data = this.reader.read(i, j);
 					System.out.println(data);
 				}

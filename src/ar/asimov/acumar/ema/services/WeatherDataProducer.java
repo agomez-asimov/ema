@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -31,76 +34,104 @@ public class WeatherDataProducer implements Runnable {
 	private WeakReference<Station> station;
 	private Queue<WeatherMeasure> measures;
 	private final Log logger;
+	
 	private Short exitCode;
 	private Integer produced;
+	private LocalDate lastProcessedDate;
+	private Integer lastProcessedRecords;
+	private LocalDate startDate;
+	private Integer startRecord;
 	private boolean running;
+	private boolean stop;
 
-	public WeatherDataProducer(final Station station, Queue<WeatherMeasure> measures) {
+	public WeatherDataProducer(final Station station, Queue<WeatherMeasure> measures,LocalDate startDate,Integer  startRecord) {
 		this.measures = measures;
 		this.station = new WeakReference<Station>(station);
 		this.logger = LogFactory.getLog(this.getClass());
 		this.running = false;
+		this.startDate = startDate; 
+		this.startRecord = startRecord;
+		this.produced = 0;
 	}
-	
-	protected Log getLogger(){
+
+	protected Log getLogger() {
 		return this.logger;
 	}
-	
-	public short getExitCode(){
-		return (this.running)?null:this.exitCode;
+
+	public short getExitCode() {
+		return (this.running) ? null : this.exitCode;
 	}
-	
-	public Integer getProduced(){
-		return (this.running)?null:this.produced;
+
+	public Integer getProduced() {
+		return (this.running) ? null : this.produced;
 	}
 
 	@Override
 	public void run() {
 		this.running = true;
-		try { 
+		try {
 			Path path = Paths.get(this.getStation().getDbPath());
-			if (path.toFile().isDirectory()) {			
-				//Abro el directorio especificado en Station.getDbPath()
-				DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.wlk");
-					for (Path wlkFile : stream) {
-						//Recorro todos los archivos .wlk del directorio
-						WLinkFileReader reader = new WLinkFileReader(wlkFile.toString());
-						this.getLogger().debug(Thread.currentThread().getName() + ": " + "Reading "
-								+ wlkFile.getFileName().toString());
-						int dayIndex = 1;
-						int recordIndex = 0;
-						LocalDate localLastProcessedDate = this.getStation().getLastProcessedDate();
-						if (null != localLastProcessedDate && (reader.contains(localLastProcessedDate)
-								&& this.getStation().getLastProcessedRecords() < reader
-										.recordsInDay(localLastProcessedDate.getDayOfMonth()))) {
-							dayIndex = localLastProcessedDate.getDayOfMonth();
-							recordIndex = this.getStation().getLastProcessedRecords();
-						} else if (null != localLastProcessedDate && reader.getFilePeriod().atEndOfMonth().isBefore(localLastProcessedDate)) {
-							dayIndex = 32;
-						}
-						for (int i = dayIndex; i < reader.getFilePeriod().atEndOfMonth().getDayOfMonth(); i++) {
-							for (int j = recordIndex + 1; j < reader.recordsInDay(i); j++) {
-								this.getLogger().debug(Thread.currentThread().getName()+": "+"Processed "+wlkFile.getFileName()+".day["+i+"]"+"["+j+"]");
-								DailyWeatherData record = reader.read(i, j);
-								WeatherMeasure measure = this.fromFileRecord(record);
-								this.produce(measure);
-								this.produced++;
-							}
-							this.getStation().setLastProcessedDate(reader.getFilePeriod().atDay(i));
-						}
-						reader.close();
-					}
-				}
-
+			if (null == this.startDate) {
+				this.firstProces(path);
+			} else {
+				this.updateProcess(path, this.startDate, this.startRecord);
+			}
 		} catch (IOException e) {
-			this.getLogger().fatal("An IOException occured",e);
 			this.exitCode = 1;
-		}finally{
+			this.lastProcessedRecords = 0;
+			this.lastProcessedDate = null;
+			this.produced = 0;
+		} finally {
 			this.running = false;
 		}
 	}
-	
-	private Station getStation(){
+
+	private void updateProcess(Path path, LocalDate localLastProcessedDate,Integer localLastProcessedRecords) throws IOException {
+		this.lastProcessedDate = localLastProcessedDate;
+		boolean fileNotFound = false;
+		while (YearMonth.from(this.lastProcessedDate).isBefore(YearMonth.now()) && !fileNotFound && !this.stop) {
+			YearMonth currentPeriod = YearMonth.from(this.lastProcessedDate);
+			String fileName = currentPeriod.format(DateTimeFormatter.ofPattern("y-M")) + ".wlk";
+			Path filePath = path.resolve(fileName);
+			if(!(fileNotFound = filePath.toFile().exists())){
+				WLinkFileReader reader = new WLinkFileReader(filePath);
+				while (this.lastProcessedDate.isBefore(currentPeriod.atEndOfMonth())) {
+					this.lastProcessedRecords = (this.lastProcessedDate.isEqual(lastProcessedDate)) ? localLastProcessedRecords : 0;
+					int maxRecords = reader.getRecordsInDay(this.lastProcessedDate.getDayOfMonth());
+					while(this.lastProcessedRecords < maxRecords){
+						this.produce(this.fromFileRecord(reader.read(this.lastProcessedDate.getDayOfMonth(), this.lastProcessedRecords)));
+						this.produced++;
+						this.lastProcessedRecords++;
+					}
+					this.lastProcessedDate = this.lastProcessedDate.plus(1, ChronoUnit.DAYS);
+				}
+			}
+		}
+	}
+
+	private void firstProces(Path path) throws IOException{
+		this.lastProcessedDate = null;
+		DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.wlk");
+		for (Path wlkFile : stream) {
+			WLinkFileReader reader = new WLinkFileReader(wlkFile.toString());
+			for (int i = 1; i < reader.getFilePeriod().atEndOfMonth().getDayOfMonth(); i++) {
+				int maxRecords = reader.getRecordsInDay(i);
+				this.lastProcessedRecords = 0;
+				while(lastProcessedRecords < maxRecords) {
+					DailyWeatherData record = reader.read(i, lastProcessedRecords);
+					WeatherMeasure measure = this.fromFileRecord(record);
+					this.produce(measure);
+					this.produced++;
+					this.lastProcessedRecords++;
+				}
+				this.lastProcessedDate = reader.getFilePeriod().atDay(i);
+			}
+			reader.close();
+		}
+
+	}
+
+	public Station getStation() {
 		return this.station.get();
 	}
 
@@ -110,7 +141,6 @@ public class WeatherDataProducer implements Runnable {
 			this.measures.notifyAll();
 		}
 	}
-	
 
 	private WeatherMeasure fromFileRecord(DailyWeatherData record) {
 		WeatherMeasure measure = new WeatherMeasure();
@@ -149,7 +179,7 @@ public class WeatherDataProducer implements Runnable {
 			lt.setDate(measure.getDate());
 			lt.setStartTime(measure.getStartTime());
 			lt.setOrder(i);
-			lt.setValue((int)record.getLeafTemperature(i));
+			lt.setValue((int) record.getLeafTemperature(i));
 			localLeafTemperature.add(lt);
 		}
 		measure.setLeafTemperature(localLeafTemperature);
@@ -160,7 +190,7 @@ public class WeatherDataProducer implements Runnable {
 			ns.setDate(measure.getDate());
 			ns.setStartTime(measure.getStartTime());
 			ns.setOrder(i);
-			ns.setValue((int)record.getNewSensor(i));
+			ns.setValue((int) record.getNewSensor(i));
 			localNewSensors.add(ns);
 		}
 		measure.setNewSensors(localNewSensors);
@@ -171,7 +201,7 @@ public class WeatherDataProducer implements Runnable {
 			st.setDate(measure.getDate());
 			st.setStartTime(measure.getStartTime());
 			st.setOrder(i);
-			st.setValue((int)record.getSoilTemperature(i));
+			st.setValue((int) record.getSoilTemperature(i));
 			localSoilTemperature.add(st);
 		}
 		measure.setSoilTemperature(localSoilTemperature);
@@ -182,7 +212,7 @@ public class WeatherDataProducer implements Runnable {
 			sm.setDate(measure.getDate());
 			sm.setStartTime(measure.getStartTime());
 			sm.setOrder(i);
-			sm.setValue((int)record.getSoilMoisture(i));
+			sm.setValue((int) record.getSoilMoisture(i));
 			localSoilMoisture.add(sm);
 		}
 		measure.setSoilMoisture(localSoilMoisture);
@@ -193,7 +223,7 @@ public class WeatherDataProducer implements Runnable {
 			lw.setDate(measure.getDate());
 			lw.setStartTime(measure.getStartTime());
 			lw.setOrder(i);
-			lw.setValue((int)record.getLeafWetness(i));
+			lw.setValue((int) record.getLeafWetness(i));
 			localLeafWetness.add(lw);
 		}
 		measure.setLeafWetness(localLeafWetness);
@@ -204,7 +234,7 @@ public class WeatherDataProducer implements Runnable {
 			et.setDate(measure.getDate());
 			et.setStartTime(measure.getStartTime());
 			et.setOrder(i);
-			et.setValue((int)record.getExtraTemperature(i));
+			et.setValue((int) record.getExtraTemperature(i));
 			localExtraTemperature.add(et);
 		}
 		measure.setExtraTemperature(localExtraTemperature);
@@ -215,11 +245,40 @@ public class WeatherDataProducer implements Runnable {
 			eh.setDate(measure.getDate());
 			eh.setStartTime(measure.getStartTime());
 			eh.setOrder(i);
-			eh.setValue((int)record.getExtraHumidity(i));
+			eh.setValue((int) record.getExtraHumidity(i));
 			localExtraHumidity.add(eh);
 		}
 		measure.setExtraHumidity(localExtraHumidity);
 		return measure;
-		
+
 	}
+	
+	
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public Integer getStartRecord() {
+		return startRecord;
+	}
+
+	public LocalDate getLastProcessedDate() {
+		return lastProcessedDate;
+	}
+
+	public Integer getlastProcessedRecords() {
+		return lastProcessedRecords;
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void stop() {
+		this.stop = true;
+	}
+
+	
+
 }
