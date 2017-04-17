@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ar.asimov.acumar.ema.model.ProcessLog;
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherMeasure;
@@ -23,10 +26,12 @@ public class WeatherController implements Runnable{
 	private ConfigurationDAO configurations;
 	private Queue<WeatherMeasure> measures;
 	private Queue<String> messages;
+	private final Log logger;
 	
 	public WeatherController() {
 		this.configurations =new ConfigurationDAO(EntityManagerHelper.getEntityManager());
 		this.measures = new LinkedBlockingQueue<>();
+		this.logger = LogFactory.getLog(this.getClass());
 	}
 	
 	public static void main(String[] args) {
@@ -52,11 +57,18 @@ public class WeatherController implements Runnable{
 			log.setStation(station);
 			log.setStart(Instant.now());
 			logs.put(station,log);
+			logger.info("Process started for "+log.getStation().getId()+" at "+log.getStart().toString());
 		}
 		final WeatherDataProducerManager producerManager = new WeatherDataProducerManager(this.measures, stations);
 		final WeatherDataConsumerManager consumerManager = new WeatherDataConsumerManager(this.measures, 1000);
 		Thread producerManagerThread = new Thread(producerManager,"Producer Manager");
 		Thread consumerManagerThread = new Thread(consumerManager,"Consumer Manager");
+		consumerManagerThread.setUncaughtExceptionHandler((Thread t,Throwable e) -> {
+			logger.error("Error in thread "+t.getName()+ " message: "+e.getMessage());
+		});
+		producerManagerThread.setUncaughtExceptionHandler((Thread t,Throwable e) -> {
+			logger.error("Error in thread "+t.getName()+" message: "+e.getMessage());
+		});
 		producerManagerThread.start();
 		consumerManagerThread.start();
 		try{
