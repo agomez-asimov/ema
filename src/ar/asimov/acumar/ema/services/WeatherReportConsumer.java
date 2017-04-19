@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
@@ -12,38 +12,39 @@ import org.apache.commons.logging.LogFactory;
 
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherReport;
-import ar.asimov.acumar.ema.model.WeatherSummary;
 import ar.asimov.acumar.ema.model.dao.WeatherMeasureDAO;
 import ar.asimov.acumar.ema.model.helper.EntityManagerHelper;
 
-public class WeatherDataConsumer implements Callable<List<ProcessInformation>> {
+public class WeatherReportConsumer implements Callable<List<ProcessInformation>> {
 
-	private static final Log LOGGER = LogFactory.getLog(WeatherDataConsumer.class); 
+	private static final Log LOGGER = LogFactory.getLog(WeatherReportConsumer.class); 
 	
-	private Queue<WeatherReport> measures;
+	private final BlockingQueue<WeatherReport> reports;
+	private final Station station;
 	private boolean stop;
 	private boolean running;
 	private int processLimit;
 	private int consumed;
 
-	public WeatherDataConsumer(Queue<WeatherReport> sharedQueue,int processLimit) {
-		this.measures = sharedQueue;
+	public WeatherReportConsumer(Station station,BlockingQueue<WeatherReport> sharedQueue,int processLimit) {
+		this.reports = sharedQueue;
 		this.stop = false;
 		this.running = false;
 		this.processLimit = processLimit;
 		this.consumed = 0;
+		this.station = station;
 	}
 
 
 	protected WeatherReport consume() throws InterruptedException {
-		while (this.measures.isEmpty()) {
-			synchronized (this.measures) {
-				this.measures.wait();
+		while (this.reports.isEmpty() || !this.reports.peek().getStation().equals(this.station)) {
+			synchronized (this.reports) {
+				this.reports.wait();
 			}
 		}
-		synchronized (this.measures) {
-			this.measures.notifyAll();
-			return this.measures.poll();
+		synchronized (this.reports) {
+			this.reports.notifyAll();
+			return this.reports.poll();
 		}
 	}
 
@@ -60,33 +61,33 @@ public class WeatherDataConsumer implements Callable<List<ProcessInformation>> {
 	}
 	
 	private Log getLogger(){
-		return WeatherDataConsumer.LOGGER;
+		return WeatherReportConsumer.LOGGER;
 	}
 
 	@Override
 	public List<ProcessInformation> call() throws Exception {
 		final Map<Station,ProcessInformation> information = new HashMap<Station,ProcessInformation>();
-		if(this.getLogger().isDebugEnabled()){
-			this.getLogger().debug("Weather consumer started");
+		if(this.getLogger().isInfoEnabled()){
+			this.getLogger().info("WeatherReportConsumer started");
 		}
 		this.running = true;
 		boolean commit = false;
-		final WeatherMeasureDAO measures = new WeatherMeasureDAO(EntityManagerHelper.getEntityManager());
+		final WeatherMeasureDAO reports = new WeatherMeasureDAO(EntityManagerHelper.getEntityManager());
 		try {
 			EntityManagerHelper.beginTransaction();
 			final List<WeatherReport> localConsumed = new ArrayList<>();
-			while (!this.stop && !this.measures.isEmpty() && !commit) {
+			while (!this.stop && !this.reports.isEmpty() && !commit) {
 				WeatherReport consumed = this.consume();
 				if(this.getLogger().isDebugEnabled()){
 					this.getLogger().debug("Consumed weather measure for "+consumed.getStation().getId()+" on "+consumed.getDate() + " from "+consumed.getStartTime().toString() + " to "+consumed.getEndTime().toString());
 				}
-				measures.create(consumed);
+				reports.create(consumed);
 				localConsumed.add(consumed);
 				commit = (localConsumed.size() == this.processLimit);
 				Thread.sleep(50);
 			}
 			if(this.getLogger().isDebugEnabled()){
-				this.getLogger().debug("Consume loop exited for Consumer status [stop]="+String.valueOf(this.stop)+" [measuresEmpty]="+this.measures.isEmpty()+" [commit]="+commit);
+				this.getLogger().debug("Consume loop exited for Consumer status [stop]="+String.valueOf(this.stop)+" [reportsEmpty]="+this.reports.isEmpty()+" [commit]="+commit);
 			}
 			EntityManagerHelper.commitTransaction();
 			this.consumed = localConsumed.size();
@@ -104,6 +105,9 @@ public class WeatherDataConsumer implements Callable<List<ProcessInformation>> {
 					info.setLastProcessedRecords(info.getLastProcessedRecords()+1);
 				}
 				info.setTotalProcessed(info.getTotalProcessed()+1);
+			}
+			if(this.getLogger().isInfoEnabled()){
+				this.getLogger().info("WeatherReportConsumer finished.  Total consumed "+localConsumed.size());
 			}
 			return new ArrayList<>(information.values());
 		} catch (InterruptedException e) {

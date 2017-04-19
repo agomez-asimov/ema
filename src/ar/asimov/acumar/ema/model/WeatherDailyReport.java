@@ -16,13 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * Entity implementation class for Entity: WeatherSummary
+ * Entity implementation class for Entity: WeatherDailyReport
  *
  */
-@IdClass(WeatherSummary.PrimaryKey.class)
+@IdClass(WeatherDailyReport.PrimaryKey.class)
 @Entity
 @Table(name="ta_ams_weather_summary")
-public class WeatherSummary implements Serializable {
+public class WeatherDailyReport implements Serializable {
 	
 	public static class PrimaryKey implements Serializable{
 		
@@ -252,7 +252,7 @@ public class WeatherSummary implements Serializable {
 	private Double integratedCoolDD65;
 
 
-	public WeatherSummary() {
+	public WeatherDailyReport() {
 		super();
 	}
 

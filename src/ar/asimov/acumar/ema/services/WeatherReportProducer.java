@@ -14,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
@@ -31,10 +32,10 @@ import ar.asimov.acumar.ema.model.WeatherReport;
 import ar.asimov.acumar.ema.wlk.data.DailyWeatherData;
 import ar.asimov.acumar.ema.wlk.reader.WLinkFileReader;
 
-public class WeatherDataProducer implements Callable<ProcessInformation> {
-	private static final Log LOGGER = LogFactory.getLog(WeatherDataProducer.class);
+public class WeatherReportProducer implements Callable<ProcessInformation> {
+	private static final Log LOGGER = LogFactory.getLog(WeatherReportProducer.class);
 	private WeakReference<Station> station;
-	private Queue<WeatherReport> measures;
+	private BlockingQueue<WeatherReport> reports;
 	
 	private Short exitCode;
 	private LocalDate startDate;
@@ -42,8 +43,8 @@ public class WeatherDataProducer implements Callable<ProcessInformation> {
 	private boolean running;
 	private boolean stop;
 
-	public WeatherDataProducer(final Station station, Queue<WeatherReport> measures,LocalDate startDate,Integer  startRecord) {
-		this.measures = measures;
+	public WeatherReportProducer(final Station station, BlockingQueue<WeatherReport> reports,LocalDate startDate,Integer  startRecord) {
+		this.reports = reports;
 		this.station = new WeakReference<Station>(station);
 		this.running = false;
 		this.startDate = startDate; 
@@ -51,7 +52,7 @@ public class WeatherDataProducer implements Callable<ProcessInformation> {
 	}
 
 	protected Log getLogger() {
-		return WeatherDataProducer.LOGGER;
+		return WeatherReportProducer.LOGGER;
 	}
 
 	public short getExitCode() {
@@ -114,8 +115,8 @@ public class WeatherDataProducer implements Callable<ProcessInformation> {
 				int localLastProcessedRecords = 0;
 				while(localLastProcessedRecords < maxRecords) {
 					DailyWeatherData record = reader.read(i, localLastProcessedRecords);
-					WeatherReport measure = this.fromFileRecord(record);
-					this.produce(measure);
+					WeatherReport report = this.fromFileRecord(record);
+					this.produce(report);
 					localTotalProcessedRecords++;
 					localLastProcessedRecords++;
 					information.setTotalProcessed(localTotalProcessedRecords);
@@ -132,121 +133,130 @@ public class WeatherDataProducer implements Callable<ProcessInformation> {
 		return this.station.get();
 	}
 
-	private void produce(WeatherReport measure) {
-		synchronized (this.measures) {
-			this.measures.add(measure);
-			this.measures.notifyAll();
+	private void produce(WeatherReport report) {
+		if(this.reports.remainingCapacity()==0){
+			synchronized(this.reports){
+				try{
+					this.reports.wait();
+				}catch(InterruptedException e){
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		synchronized (this.reports) {
+			this.reports.add(report);
+			this.reports.notifyAll();
 		}
 	}
 
 	private WeatherReport fromFileRecord(DailyWeatherData record) {
-		WeatherReport measure = new WeatherReport();
-		measure.setDate(record.getDate());
-		measure.setStation(this.getStation());
-		measure.setStartTime(record.getStartTime());
-		measure.setEndTime(record.getEndTime());
-		measure.setOutsideTemperature(record.getOutsideTemperature());
-		measure.setMaxOutsideTemperature(record.getMaxOutsideTemperature());
-		measure.setMinOutsideTemperature(record.getMinOutsideTemperature());
-		measure.setInsideTemperature(record.getInsideTemperature());
-		measure.setPressure(record.getPressure());
-		measure.setOutsideHumidity(record.getOutsideHumidity());
-		measure.setInsideHumidity(record.getInsideHumidity());
-		measure.setPrecipitation(record.getPrecipitation());
-		measure.setMaxPrecipitationRate(record.getMaxPrecipitationRate());
-		measure.setWindSpeed(record.getWindSpeed());
-		measure.setMaxWindSpeed(record.getMaxWindSpeed());
-		measure.setWindSamplesNumber(record.getWindSamplesNumber());
-		measure.setSolarRadiation(record.getSolarRadiation());
-		measure.setMaxSolarRadiation(record.getMaxSolarRadiation());
-		measure.setUVIndex(record.getUVIndex());
-		measure.setMaxUVIndex(record.getMaxUVIndex());
-		measure.setExtraRadiation(record.getExtraRadiation());
-		measure.setForecast(record.getForecast());
-		measure.setET(record.getET());
-		measure.setIconFlags(record.getIconFlags());
-		measure.setRainCollectorType(record.getRainCollectorType());
-		measure.setWindDirection(record.getWindDirection());
-		measure.setMaxWindDirection(record.getMaxWindDirection());
-		measure.setMoreFlags(record.getMoreFlags());
+		WeatherReport report = new WeatherReport();
+		report.setDate(record.getDate());
+		report.setStation(this.getStation());
+		report.setStartTime(record.getStartTime());
+		report.setEndTime(record.getEndTime());
+		report.setOutsideTemperature(record.getOutsideTemperature());
+		report.setMaxOutsideTemperature(record.getMaxOutsideTemperature());
+		report.setMinOutsideTemperature(record.getMinOutsideTemperature());
+		report.setInsideTemperature(record.getInsideTemperature());
+		report.setPressure(record.getPressure());
+		report.setOutsideHumidity(record.getOutsideHumidity());
+		report.setInsideHumidity(record.getInsideHumidity());
+		report.setPrecipitation(record.getPrecipitation());
+		report.setMaxPrecipitationRate(record.getMaxPrecipitationRate());
+		report.setWindSpeed(record.getWindSpeed());
+		report.setMaxWindSpeed(record.getMaxWindSpeed());
+		report.setWindSamplesNumber(record.getWindSamplesNumber());
+		report.setSolarRadiation(record.getSolarRadiation());
+		report.setMaxSolarRadiation(record.getMaxSolarRadiation());
+		report.setUVIndex(record.getUVIndex());
+		report.setMaxUVIndex(record.getMaxUVIndex());
+		report.setExtraRadiation(record.getExtraRadiation());
+		report.setForecast(record.getForecast());
+		report.setET(record.getET());
+		report.setIconFlags(record.getIconFlags());
+		report.setRainCollectorType(record.getRainCollectorType());
+		report.setWindDirection(record.getWindDirection());
+		report.setMaxWindDirection(record.getMaxWindDirection());
+		report.setMoreFlags(record.getMoreFlags());
 		List<LeafTemperature> localLeafTemperature = new ArrayList<>();
 		for (int i = 0; i < record.getLeafTemperature().size(); i++) {
 			LeafTemperature lt = new LeafTemperature();
 			lt.setStation(this.getStation());
-			lt.setDate(measure.getDate());
-			lt.setStartTime(measure.getStartTime());
+			lt.setDate(report.getDate());
+			lt.setStartTime(report.getStartTime());
 			lt.setOrder(i);
 			lt.setValue((int) record.getLeafTemperature(i));
 			localLeafTemperature.add(lt);
 		}
-		measure.setLeafTemperature(localLeafTemperature);
+		report.setLeafTemperature(localLeafTemperature);
 		List<NewSensor> localNewSensors = new ArrayList<>();
 		for (int i = 0; i < record.getNewSensors().size(); i++) {
 			NewSensor ns = new NewSensor();
 			ns.setStation(this.getStation());
-			ns.setDate(measure.getDate());
-			ns.setStartTime(measure.getStartTime());
+			ns.setDate(report.getDate());
+			ns.setStartTime(report.getStartTime());
 			ns.setOrder(i);
 			ns.setValue((int) record.getNewSensor(i));
 			localNewSensors.add(ns);
 		}
-		measure.setNewSensors(localNewSensors);
+		report.setNewSensors(localNewSensors);
 		List<SoilTemperature> localSoilTemperature = new ArrayList<>();
 		for (int i = 0; i < record.getSoilTemperature().size(); i++) {
 			SoilTemperature st = new SoilTemperature();
 			st.setStation(this.getStation());
-			st.setDate(measure.getDate());
-			st.setStartTime(measure.getStartTime());
+			st.setDate(report.getDate());
+			st.setStartTime(report.getStartTime());
 			st.setOrder(i);
 			st.setValue((int) record.getSoilTemperature(i));
 			localSoilTemperature.add(st);
 		}
-		measure.setSoilTemperature(localSoilTemperature);
+		report.setSoilTemperature(localSoilTemperature);
 		List<SoilMoisture> localSoilMoisture = new ArrayList<>();
 		for (int i = 0; i < record.getSoilMoisture().size(); i++) {
 			SoilMoisture sm = new SoilMoisture();
 			sm.setStation(this.getStation());
-			sm.setDate(measure.getDate());
-			sm.setStartTime(measure.getStartTime());
+			sm.setDate(report.getDate());
+			sm.setStartTime(report.getStartTime());
 			sm.setOrder(i);
 			sm.setValue((int) record.getSoilMoisture(i));
 			localSoilMoisture.add(sm);
 		}
-		measure.setSoilMoisture(localSoilMoisture);
+		report.setSoilMoisture(localSoilMoisture);
 		List<LeafWetness> localLeafWetness = new ArrayList<>();
 		for (int i = 0; i < record.getLeafWetness().size(); i++) {
 			LeafWetness lw = new LeafWetness();
 			lw.setStation(this.getStation());
-			lw.setDate(measure.getDate());
-			lw.setStartTime(measure.getStartTime());
+			lw.setDate(report.getDate());
+			lw.setStartTime(report.getStartTime());
 			lw.setOrder(i);
 			lw.setValue((int) record.getLeafWetness(i));
 			localLeafWetness.add(lw);
 		}
-		measure.setLeafWetness(localLeafWetness);
+		report.setLeafWetness(localLeafWetness);
 		List<ExtraTemperature> localExtraTemperature = new ArrayList<>();
 		for (int i = 0; i < record.getExtraTemperature().size(); i++) {
 			ExtraTemperature et = new ExtraTemperature();
 			et.setStation(this.getStation());
-			et.setDate(measure.getDate());
-			et.setStartTime(measure.getStartTime());
+			et.setDate(report.getDate());
+			et.setStartTime(report.getStartTime());
 			et.setOrder(i);
 			et.setValue((int) record.getExtraTemperature(i));
 			localExtraTemperature.add(et);
 		}
-		measure.setExtraTemperature(localExtraTemperature);
+		report.setExtraTemperature(localExtraTemperature);
 		List<ExtraHumidity> localExtraHumidity = new ArrayList<>();
 		for (int i = 0; i < record.getExtraHumidity().size(); i++) {
 			ExtraHumidity eh = new ExtraHumidity();
 			eh.setStation(this.getStation());
-			eh.setDate(measure.getDate());
-			eh.setStartTime(measure.getStartTime());
+			eh.setDate(report.getDate());
+			eh.setStartTime(report.getStartTime());
 			eh.setOrder(i);
 			eh.setValue((int) record.getExtraHumidity(i));
 			localExtraHumidity.add(eh);
 		}
-		measure.setExtraHumidity(localExtraHumidity);
-		return measure;
+		report.setExtraHumidity(localExtraHumidity);
+		return report;
 
 	}
 	
