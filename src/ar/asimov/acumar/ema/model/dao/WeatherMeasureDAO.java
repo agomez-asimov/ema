@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 
 import ar.asimov.acumar.ema.model.Station;
-import ar.asimov.acumar.ema.model.WeatherMeasure;
+import ar.asimov.acumar.ema.model.WeatherReport;
 
 public class WeatherMeasureDAO {
 	
@@ -23,43 +23,43 @@ public class WeatherMeasureDAO {
 	}
 	
 	
-	public WeatherMeasure fetch(WeatherMeasure.PrimaryKey id){
-		return this.entityManager.find(WeatherMeasure.class, id);
+	public WeatherReport fetch(WeatherReport.PrimaryKey id){
+		return this.entityManager.find(WeatherReport.class, id);
 	}
 	
-	public List<WeatherMeasure> fetchAll(){
+	public List<WeatherReport> fetchAll(){
 		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<WeatherMeasure> cq = cb.createQuery(WeatherMeasure.class);
-		Root<WeatherMeasure> root = cq.from(WeatherMeasure.class);
+		CriteriaQuery<WeatherReport> cq = cb.createQuery(WeatherReport.class);
+		Root<WeatherReport> root = cq.from(WeatherReport.class);
 		cq.select(root);
-		TypedQuery<WeatherMeasure> tq = this.entityManager.createQuery(cq);
+		TypedQuery<WeatherReport> tq = this.entityManager.createQuery(cq);
 		return tq.getResultList();
 	}
 	
-	public List<WeatherMeasure> fetchAll(Station station){
+	public List<WeatherReport> fetchAll(Station station){
 		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<WeatherMeasure> cq = cb.createQuery(WeatherMeasure.class);
-		Root<WeatherMeasure> root = cq.from(WeatherMeasure.class);
-		EntityType<WeatherMeasure> WeatherMeasure_ = this.entityManager.getMetamodel().entity(WeatherMeasure.class);
+		CriteriaQuery<WeatherReport> cq = cb.createQuery(WeatherReport.class);
+		Root<WeatherReport> root = cq.from(WeatherReport.class);
+		EntityType<WeatherReport> WeatherMeasure_ = this.entityManager.getMetamodel().entity(WeatherReport.class);
 		cq.where(
 				cb.equal(root.get(WeatherMeasure_.getSingularAttribute("station")),station)
 				);
 		cq.select(root);
-		TypedQuery<WeatherMeasure> tq = this.entityManager.createQuery(cq);
+		TypedQuery<WeatherReport> tq = this.entityManager.createQuery(cq);
 		return tq.getResultList();
 	}
 	
-	public WeatherMeasure fetchLast(Station station){
+	public WeatherReport fetchLast(Station station){
 		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<WeatherMeasure> cq = cb.createQuery(WeatherMeasure.class);
-		Root<WeatherMeasure> root = cq.from(WeatherMeasure.class);
-		EntityType<WeatherMeasure> WeatherMeasure_ = this.entityManager.getMetamodel().entity(WeatherMeasure.class);
+		CriteriaQuery<WeatherReport> cq = cb.createQuery(WeatherReport.class);
+		Root<WeatherReport> root = cq.from(WeatherReport.class);
+		EntityType<WeatherReport> WeatherMeasure_ = this.entityManager.getMetamodel().entity(WeatherReport.class);
 		cq.where(
 				cb.equal(root.get(WeatherMeasure_.getSingularAttribute("station")),station)
 				);
 		cq.select(root);
 		cq.orderBy(cb.desc(root.get(WeatherMeasure_.getSingularAttribute("date"))),cb.desc(root.get(WeatherMeasure_.getSingularAttribute("time"))));
-		TypedQuery<WeatherMeasure> tq = this.entityManager.createQuery(cq);
+		TypedQuery<WeatherReport> tq = this.entityManager.createQuery(cq);
 		if(null == tq.getResultList() || tq.getResultList().isEmpty()){
 			return null;
 		}
@@ -68,15 +68,15 @@ public class WeatherMeasureDAO {
 	
 	public Integer count(Station station,LocalDate date){
 		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<WeatherMeasure> cq = cb.createQuery(WeatherMeasure.class);
-		Root<WeatherMeasure> root = cq.from(WeatherMeasure.class);
-		EntityType<WeatherMeasure> WeatherMeasure_ = this.entityManager.getMetamodel().entity(WeatherMeasure.class);
+		CriteriaQuery<WeatherReport> cq = cb.createQuery(WeatherReport.class);
+		Root<WeatherReport> root = cq.from(WeatherReport.class);
+		EntityType<WeatherReport> WeatherMeasure_ = this.entityManager.getMetamodel().entity(WeatherReport.class);
 		cq.where(cb.and(
 				cb.equal(root.get(WeatherMeasure_.getSingularAttribute("station")),station),
 				cb.equal(root.get(WeatherMeasure_.getSingularAttribute("date")),date))
 				);
 		cq.select(root);
-		TypedQuery<WeatherMeasure> tq = this.entityManager.createQuery(cq);
+		TypedQuery<WeatherReport> tq = this.entityManager.createQuery(cq);
 		if(null == tq.getResultList() || tq.getResultList().isEmpty()){
 			return 0;
 		}
@@ -84,7 +84,7 @@ public class WeatherMeasureDAO {
 	}
 
 
-	public void create(WeatherMeasure weatherMeasure) {
+	public void create(WeatherReport weatherMeasure) {
 		this.entityManager.persist(weatherMeasure);
 		
 	}

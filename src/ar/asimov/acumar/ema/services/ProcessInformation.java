@@ -2,6 +2,8 @@ package ar.asimov.acumar.ema.services;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import ar.asimov.acumar.ema.model.Station;
+
 public class ProcessInformation implements Serializable{
 	 	
 		/**
@@ -11,6 +13,12 @@ public class ProcessInformation implements Serializable{
 	private Integer totalProcessed;
 	private LocalDate lastProcessedDate;
 	private Integer lastProcessedRecords;
+	private Station station;
+	
+	public ProcessInformation() {
+		this.totalProcessed = 0;
+	}
+	
 	public Integer getTotalProcessed() {
 		return totalProcessed;
 	}
@@ -29,6 +37,16 @@ public class ProcessInformation implements Serializable{
 	public void setLastProcessedRecords(Integer lastProcessedRecords) {
 		this.lastProcessedRecords = lastProcessedRecords;
 	}
+	
+	
+	public Station getStation() {
+		return station;
+	}
+
+	public void setStation(Station station) {
+		this.station = station;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -5,14 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ar.asimov.acumar.ema.model.ProcessLog;
 import ar.asimov.acumar.ema.model.Station;
-import ar.asimov.acumar.ema.model.WeatherMeasure;
+import ar.asimov.acumar.ema.model.WeatherReport;
+import ar.asimov.acumar.ema.model.WeatherSummary;
 import ar.asimov.acumar.ema.model.dao.ConfigurationDAO;
 import ar.asimov.acumar.ema.model.dao.ProcessLogDAO;
 import ar.asimov.acumar.ema.model.dao.StationDAO;
@@ -22,16 +26,11 @@ import ar.asimov.acumar.ema.services.WeatherDataConsumerManager;
 import ar.asimov.acumar.ema.services.WeatherDataProducerManager;
 
 public class WeatherController implements Runnable{
-	
-	private ConfigurationDAO configurations;
-	private Queue<WeatherMeasure> measures;
-	private Queue<String> messages;
-	private final Log logger;
+	private static final Log LOGGER = LogFactory.getLog(WeatherController.class);	 
+	private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 	
 	public WeatherController() {
-		this.configurations =new ConfigurationDAO(EntityManagerHelper.getEntityManager());
-		this.measures = new LinkedBlockingQueue<>();
-		this.logger = LogFactory.getLog(this.getClass());
+		new ConfigurationDAO(EntityManagerHelper.getEntityManager());
 	}
 	
 	public static void main(String[] args) {
@@ -45,9 +44,15 @@ public class WeatherController implements Runnable{
 		}
 
 	}
+	
+	protected Log getLogger(){
+		return LOGGER;
+	}
 
 	@Override
 	public void run() {
+		final Queue<WeatherSummary> summaries = new LinkedBlockingQueue<>();
+		final Queue<WeatherReport> measures = new LinkedBlockingQueue<>();
 		final StationDAO stationSet = new StationDAO(EntityManagerHelper.getEntityManager());
 		final ProcessLogDAO logSet = new ProcessLogDAO(EntityManagerHelper.getEntityManager());
 		List<Station> stations = stationSet.fetchAll();
@@ -57,31 +62,24 @@ public class WeatherController implements Runnable{
 			log.setStation(station);
 			log.setStart(Instant.now());
 			logs.put(station,log);
-			logger.info("Process started for "+log.getStation().getId()+" at "+log.getStart().toString());
 		}
-		final WeatherDataProducerManager producerManager = new WeatherDataProducerManager(this.measures, stations);
-		final WeatherDataConsumerManager consumerManager = new WeatherDataConsumerManager(this.measures, 1000);
-		Thread producerManagerThread = new Thread(producerManager,"Producer Manager");
-		Thread consumerManagerThread = new Thread(consumerManager,"Consumer Manager");
-		consumerManagerThread.setUncaughtExceptionHandler((Thread t,Throwable e) -> {
-			logger.error("Error in thread "+t.getName()+ " message: "+e.getMessage());
-		});
-		producerManagerThread.setUncaughtExceptionHandler((Thread t,Throwable e) -> {
-			logger.error("Error in thread "+t.getName()+" message: "+e.getMessage());
-		});
-		producerManagerThread.start();
-		consumerManagerThread.start();
+		final WeatherDataProducerManager producerManager = new WeatherDataProducerManager(measures,summaries, stations);
+		final WeatherDataConsumerManager consumerManager = new WeatherDataConsumerManager(measures, 1000);
+		this.executorService.schedule(producerManager,2,TimeUnit.SECONDS);
+		this.executorService.schedule(consumerManager,5,TimeUnit.SECONDS);
 		try{
-			producerManagerThread.join();
-			if(this.measures.isEmpty()){
-				System.out.println("IM HERE");
-				consumerManager.stop();
-			}else{
-				System.out.println("IM HERE NOW");
-				consumerManagerThread.join();
+			if(this.getLogger().isDebugEnabled()){
+				this.getLogger().debug("Waiting for producer thread to end");
 			}
+			while(!this.executorService.isTerminated()){
+				this.executorService.awaitTermination(300, TimeUnit.SECONDS);
+			}
+	
 		}catch(InterruptedException e){
 			throw new RuntimeException(e);
+		}
+		if(this.getLogger().isDebugEnabled()){
+			this.getLogger().debug("Process finished about to update process log");
 		}
 		for(Station station : stations){
 			ProcessLog lastLog = logSet.fetchLast(station);

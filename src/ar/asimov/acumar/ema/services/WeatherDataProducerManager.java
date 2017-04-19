@@ -1,29 +1,36 @@
 package ar.asimov.acumar.ema.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import ar.asimov.acumar.ema.model.ProcessLog;
 import ar.asimov.acumar.ema.model.Station;
-import ar.asimov.acumar.ema.model.WeatherMeasure;
+import ar.asimov.acumar.ema.model.WeatherReport;
+import ar.asimov.acumar.ema.model.WeatherSummary;
 import ar.asimov.acumar.ema.model.dao.ProcessLogDAO;
 import ar.asimov.acumar.ema.model.helper.EntityManagerHelper;
 
 public class WeatherDataProducerManager implements Runnable{
 	
-	
-	private Map<WeatherDataProducer,Thread> producers;
-	private Queue<WeatherMeasure> measures;
+
+	private ExecutorService executorService = Executors.newFixedThreadPool(15);
+	private Queue<WeatherReport> reports;
+	private Queue<WeatherSummary> summaries;
 	private Map<Station,ProcessInformation> produced;
 	private List<Station> stations;
 	private boolean running;
 	
-	public WeatherDataProducerManager(Queue<WeatherMeasure> measures,List<Station> stations){
-		this.measures = measures;
+	public WeatherDataProducerManager(Queue<WeatherReport> reports,Queue<WeatherSummary> summaries,List<Station> stations){
+		this.reports = reports;
+		this.summaries = summaries;
 		this.stations = stations;
-		this.producers = new HashMap<>();
 		this.produced = new HashMap<>();
 	}
 	
@@ -31,28 +38,21 @@ public class WeatherDataProducerManager implements Runnable{
 	public void run() {
 		this.running = true;
 		final ProcessLogDAO logSet = new ProcessLogDAO(EntityManagerHelper.getEntityManager());
+		final List<Future<ProcessInformation>> producersPromesses = new ArrayList<>();
 		for(Station station : this.stations){
 			ProcessLog lastLog =  logSet.fetchLast(station);
-			WeatherDataProducer producer = new WeatherDataProducer(station,this.measures,(null == lastLog)?null:lastLog.getLastDateProcessed(),(null == lastLog)?null:lastLog.getLastProcessedRecords());
-			Thread t = new Thread(producer);
-			this.producers.put(producer, t);
-			t.start();
+			WeatherDataProducer producer = new WeatherDataProducer(station,this.reports,(null == lastLog)?null:lastLog.getLastDateProcessed(),(null == lastLog)?null:lastLog.getLastProcessedRecords());
+			producersPromesses.add(executorService.submit(producer));
 		}
-		for(Thread thread : producers.values()){
+		for(Future<ProcessInformation> promess : producersPromesses){
 			try{
-				thread.join();
-			}catch(InterruptedException e){
+				ProcessInformation information = promess.get(); 
+				this.produced.put(information.getStation(), information);
+			}catch(InterruptedException | ExecutionException e){
+				this.running = false;
 				throw new RuntimeException(e);
 			}
 		}
-		for(WeatherDataProducer producer : this.producers.keySet()){
-			ProcessInformation processInfo = new ProcessInformation();
-			processInfo.setLastProcessedDate(producer.getLastProcessedDate());
-			processInfo.setLastProcessedRecords(producer.getlastProcessedRecords());
-			processInfo.setTotalProcessed(producer.getProduced());
-			this.produced.put(producer.getStation(),processInfo);
-		}
-		this.running = false;
 	}
 	
 	public ProcessInformation getInformation(Station station){
@@ -61,9 +61,7 @@ public class WeatherDataProducerManager implements Runnable{
 	
 
 	public void stop(){
-		for(WeatherDataProducer producer : this.producers.keySet()){
-			producer.stop();
-		}
+		this.executorService.shutdown();
 	}
 	
 	public boolean isRunning(){

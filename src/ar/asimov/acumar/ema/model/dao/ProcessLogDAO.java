@@ -11,7 +11,7 @@ import javax.persistence.metamodel.EntityType;
 
 import ar.asimov.acumar.ema.model.ProcessLog;
 import ar.asimov.acumar.ema.model.Station;
-import ar.asimov.acumar.ema.model.WeatherMeasure;
+import ar.asimov.acumar.ema.model.WeatherReport;
 
 public class ProcessLogDAO {
 	
