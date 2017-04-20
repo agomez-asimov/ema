@@ -13,12 +13,12 @@ import javax.persistence.metamodel.EntityType;
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherReport;
 
-public class WeatherMeasureDAO {
+public class WeatherReportDAO {
 	
 	private final EntityManager entityManager;
 	
 	
-	public WeatherMeasureDAO(EntityManager entityManager) {
+	public WeatherReportDAO(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
 	

@@ -5,7 +5,6 @@
 		<class>ar.asimov.acumar.ema.model.converter.LocalTimeConverter</class>
 		<class>ar.asimov.acumar.ema.model.Station</class>
 		<class>ar.asimov.acumar.ema.model.WeatherReport</class>
-		<class>ar.asimov.acumar.ema.model.DailySummary</class>
 		<class>ar.asimov.acumar.ema.model.SoilTemperature</class>
 		<class>ar.asimov.acumar.ema.model.ListParameterValue</class>
 		<class>ar.asimov.acumar.ema.model.LeafTemperature</class>

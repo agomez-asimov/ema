@@ -527,7 +527,7 @@ public class DailySummaryData implements Serializable {
 	}
 
 
-	public LocalTime getMinInInHumidityTime() {
+	public LocalTime getMinInHumidityTime() {
 		return minInInHumidityTime;
 	}
 

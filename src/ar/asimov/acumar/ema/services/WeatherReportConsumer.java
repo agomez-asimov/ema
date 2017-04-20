@@ -1,45 +1,49 @@
 package ar.asimov.acumar.ema.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.ref.WeakReference;
+import java.time.Instant;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ar.asimov.acumar.ema.model.ProcessLog;
 import ar.asimov.acumar.ema.model.Station;
+import ar.asimov.acumar.ema.model.WeatherDailyReport;
 import ar.asimov.acumar.ema.model.WeatherReport;
-import ar.asimov.acumar.ema.model.dao.WeatherMeasureDAO;
-import ar.asimov.acumar.ema.model.helper.EntityManagerHelper;
+import ar.asimov.acumar.ema.model.dao.DAOManager;
 
-public class WeatherReportConsumer implements Callable<List<ProcessInformation>> {
+public class WeatherReportConsumer implements Runnable {
 
 	private static final Log LOGGER = LogFactory.getLog(WeatherReportConsumer.class); 
 	
 	private final BlockingQueue<WeatherReport> reports;
-	private final Station station;
+	private final BlockingQueue<WeatherDailyReport> dailyReports;
+	private final WeakReference<Station> station;
+	private final WeatherDailyReport lastDailyReport;
 	private boolean stop;
 	private boolean running;
-	private int processLimit;
-	private int consumed;
 
-	public WeatherReportConsumer(Station station,BlockingQueue<WeatherReport> sharedQueue,int processLimit) {
-		this.reports = sharedQueue;
+	public WeatherReportConsumer(Station station,BlockingQueue<WeatherReport> weatherReports,BlockingQueue<WeatherDailyReport> dailyReports, WeatherDailyReport lastDailyReport) {
+		this.reports = weatherReports;
+		this.dailyReports = dailyReports;
 		this.stop = false;
 		this.running = false;
-		this.processLimit = processLimit;
-		this.consumed = 0;
-		this.station = station;
+		this.station = new WeakReference<>(station);
+		this.lastDailyReport = lastDailyReport;
 	}
 
 
-	protected WeatherReport consume() throws InterruptedException {
-		while (this.reports.isEmpty() || !this.reports.peek().getStation().equals(this.station)) {
+	protected WeatherReport consumeWeatherReport() throws InterruptedException {
+		while (this.reports.isEmpty()){
 			synchronized (this.reports) {
 				this.reports.wait();
+			}
+		}
+		while(!this.reports.peek().getStation().equals(this.getStation())) {
+			synchronized(this.reports){
+				this.reports.notifyAll();
+				Thread.sleep(100);
 			}
 		}
 		synchronized (this.reports) {
@@ -47,9 +51,21 @@ public class WeatherReportConsumer implements Callable<List<ProcessInformation>>
 			return this.reports.poll();
 		}
 	}
-
-	public Integer getConsumed(Station station) {
-		return this.consumed;
+	
+	protected WeatherDailyReport consumeWeatherDailyReport() throws InterruptedException{
+		while(this.dailyReports.isEmpty()){
+			synchronized(this.dailyReports){
+				this.dailyReports.wait();
+			}
+		}
+		while(!this.dailyReports.peek().getStation().equals(this.getStation())){
+			this.dailyReports.notifyAll();
+			Thread.sleep(100);
+		}
+		synchronized(this.dailyReports){
+			this.dailyReports.notifyAll();
+			return this.dailyReports.poll();
+		}
 	}
 
 	public void stop() {
@@ -65,61 +81,48 @@ public class WeatherReportConsumer implements Callable<List<ProcessInformation>>
 	}
 
 	@Override
-	public List<ProcessInformation> call() throws Exception {
-		final Map<Station,ProcessInformation> information = new HashMap<Station,ProcessInformation>();
+	public void run() {
 		if(this.getLogger().isInfoEnabled()){
 			this.getLogger().info("WeatherReportConsumer started");
 		}
+		final ProcessLog processLog = new ProcessLog();
+		processLog.setStation(this.station.get());
+		processLog.setStart(Instant.now());
 		this.running = true;
-		boolean commit = false;
-		final WeatherMeasureDAO reports = new WeatherMeasureDAO(EntityManagerHelper.getEntityManager());
 		try {
-			EntityManagerHelper.beginTransaction();
-			final List<WeatherReport> localConsumed = new ArrayList<>();
-			while (!this.stop && !this.reports.isEmpty() && !commit) {
-				WeatherReport consumed = this.consume();
+			DAOManager.startTransaction();
+			while (!this.stop) {
+				WeatherDailyReport dailyReport = this.consumeWeatherDailyReport();
 				if(this.getLogger().isDebugEnabled()){
-					this.getLogger().debug("Consumed weather measure for "+consumed.getStation().getId()+" on "+consumed.getDate() + " from "+consumed.getStartTime().toString() + " to "+consumed.getEndTime().toString());
+					this.getLogger().debug("Consumed DailyReport "+dailyReport.getStation().getId()+" "+dailyReport.getDate().toString());
 				}
-				reports.create(consumed);
-				localConsumed.add(consumed);
-				commit = (localConsumed.size() == this.processLimit);
-				Thread.sleep(50);
-			}
-			if(this.getLogger().isDebugEnabled()){
-				this.getLogger().debug("Consume loop exited for Consumer status [stop]="+String.valueOf(this.stop)+" [reportsEmpty]="+this.reports.isEmpty()+" [commit]="+commit);
-			}
-			EntityManagerHelper.commitTransaction();
-			this.consumed = localConsumed.size();
-			for(WeatherReport m : localConsumed){
-				if(!information.containsKey(m.getStation())){
-					ProcessInformation info = new ProcessInformation();
-					info.setStation(m.getStation());
-					information.put(m.getStation(), info);
+				if(dailyReport.equals(lastDailyReport)){
+					DAOManager.getWeatherDailyReportDAO().update(dailyReport);
+				}else{
+					DAOManager.getWeatherDailyReportDAO().create(dailyReport);
 				}
-				ProcessInformation info = information.get(m.getStation());
-				if(info.getLastProcessedDate() == null || info.getLastProcessedDate().isBefore(m.getDate())){
-					info.setLastProcessedDate(m.getDate());
-					info.setLastProcessedRecords(1);
-				}else if(info.getLastProcessedDate().equals(m.getDate())){
-					info.setLastProcessedRecords(info.getLastProcessedRecords()+1);
+				WeatherReport report = this.consumeWeatherReport();
+				if(this.getLogger().isDebugEnabled()){
+					this.getLogger().debug("Consumed Report "+report.getStation().getId()+" "+report.getDate().toString()+" "+report.getStartTime().toString());
 				}
-				info.setTotalProcessed(info.getTotalProcessed()+1);
+				DAOManager.getWeatherReportDAO().create(report);
+				this.stop = (this.dailyReports.isEmpty() && this.reports.isEmpty());
 			}
-			if(this.getLogger().isInfoEnabled()){
-				this.getLogger().info("WeatherReportConsumer finished.  Total consumed "+localConsumed.size());
-			}
-			return new ArrayList<>(information.values());
+			DAOManager.commitTransaction();
 		} catch (InterruptedException e) {
 			if(this.getLogger().isDebugEnabled()){
 				this.getLogger().debug("An IOException occurred in Consumer",e);
 			}
-			EntityManagerHelper.rollbackTransaction();
+			DAOManager.rollBackTransaction();
 			throw new RuntimeException(e);
 		} finally {
-			EntityManagerHelper.closeEntityManager();
+			DAOManager.close();
 			this.running = false;
-		}
+		}		
+	}
+	
+	private Station getStation(){
+		return this.station.get();
 	}
 
 }

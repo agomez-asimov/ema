@@ -55,6 +55,27 @@ public class ProcessLogDAO {
 		return tq.getResultList().get(0);
 	}
 	
+	public ProcessLog fetchLast(Station station,String process,boolean abnormalCompletion){
+		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<ProcessLog> cq = cb.createQuery(ProcessLog.class);
+		Root<ProcessLog> root = cq.from(ProcessLog.class);
+		EntityType<ProcessLog> ProcessLog_ = this.entityManager.getMetamodel().entity(ProcessLog.class);
+		cq.where(
+				cb.and(
+						cb.equal(root.get(ProcessLog_.getSingularAttribute("station")),station),
+						cb.equal(root.get(ProcessLog_.getSingularAttribute("process")),process),
+						cb.equal(root.get(ProcessLog_.getSingularAttribute("abnormalCompletion")),abnormalCompletion)
+				)
+				);
+		cq.select(root);
+		cq.orderBy(cb.desc(root.get(ProcessLog_.getSingularAttribute("start"))));
+		TypedQuery<ProcessLog> tq = this.entityManager.createQuery(cq);
+		if(null == tq.getResultList() || tq.getResultList().isEmpty()){
+			return null;
+		}
+		return tq.getResultList().get(0);
+	}
+	
 	public void create(ProcessLog processLog){
 		this.entityManager.persist(processLog);
 	}

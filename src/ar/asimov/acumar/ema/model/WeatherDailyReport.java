@@ -94,6 +94,8 @@ public class WeatherDailyReport implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="station_id", referencedColumnName="station_id")
 	private Station station;
+	@Column(name="records_in_day")
+	private Integer recordsInDay;
 	
 	/**
 	 * Total # of minutes accounted for by physical records for this day
@@ -200,7 +202,6 @@ public class WeatherDailyReport implements Serializable {
 	
 	//DailySummary2 fields
 	//TODO: add support for todaysWeather field when implemented
-	
 	@Column(name="wind_packets")
 	private Short windPackets;
 	@Column(name="max_solar")
@@ -984,6 +985,49 @@ public class WeatherDailyReport implements Serializable {
 
 	public void setIntegratedCoolDD65(Double integratedCoolDD65) {
 		this.integratedCoolDD65 = integratedCoolDD65;
+	}
+
+
+	public Integer getRecordsInDay() {
+		return recordsInDay;
+	}
+
+
+	public void setRecordsInDay(Integer recordsInDay) {
+		this.recordsInDay = recordsInDay;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((station == null) ? 0 : station.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WeatherDailyReport other = (WeatherDailyReport) obj;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (station == null) {
+			if (other.station != null)
+				return false;
+		} else if (!station.equals(other.station))
+			return false;
+		return true;
 	}
 	
 	

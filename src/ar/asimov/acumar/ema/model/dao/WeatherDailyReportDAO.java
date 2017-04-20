@@ -12,12 +12,12 @@ import javax.persistence.metamodel.EntityType;
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherDailyReport;
 
-public class WeatherSummaryDAO {
+public class WeatherDailyReportDAO {
 
 	private final EntityManager entityManager;
 	
 	
-	public WeatherSummaryDAO(EntityManager entityManager){
+	public WeatherDailyReportDAO(EntityManager entityManager){
 		this.entityManager = entityManager;
 	}
 	
@@ -66,11 +66,11 @@ public class WeatherSummaryDAO {
 	
 	
 	
-	public void create(Station station){
-		this.entityManager.persist(station);
+	public void create(WeatherDailyReport report){
+		this.entityManager.persist(report);
 	}
 	
-	public void update(Station station){
-		this.entityManager.merge(station);
+	public void update(WeatherDailyReport report){
+		this.entityManager.merge(report);
 	}
 }

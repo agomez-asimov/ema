@@ -8,6 +8,8 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,6 +28,7 @@ public class ProcessLog implements Serializable {
 
 	@Id
 	@Column(name="process_id")
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
 	@ManyToOne
 	@JoinColumn(name="station_id", referencedColumnName="station_id")
@@ -35,15 +38,19 @@ public class ProcessLog implements Serializable {
 	@Column(name="total_processed_records")
 	private Integer totalProcessedRecords;
 	@Column(name="last_date_processed")
-	private LocalDate lastDateProcessed;
+	private LocalDate lastProcessedDate;
 	@Column(name="last_processed_records")
-	private Integer lastProcessedRecords;
+	private Integer lastProcessedDateRecords;
 	@Column(name="process_end")
 	private Instant end;
 	@Column(name="abnormal_completion")
 	private Boolean abnormalCompletion;
 	@Column(name="abnormal_completion_cause")
 	private String abnormalCompletionCause;
+	@Column(name="process")
+	private String process;
+	
+	
 
 	
 	public ProcessLog() {
@@ -81,23 +88,23 @@ public class ProcessLog implements Serializable {
 	}
 
 
-	public LocalDate getLastDateProcessed() {
-		return lastDateProcessed;
+	public LocalDate getLastProcessedDate() {
+		return lastProcessedDate;
 	}
 
 
-	public void setLastDateProcessed(LocalDate lastDateProcessed) {
-		this.lastDateProcessed = lastDateProcessed;
+	public void setLastProcessedDate(LocalDate lastDateProcessed) {
+		this.lastProcessedDate = lastDateProcessed;
 	}
 
 
-	public Integer getLastProcessedRecords() {
-		return lastProcessedRecords;
+	public Integer getLastProcessedDateRecords() {
+		return lastProcessedDateRecords;
 	}
 
 
-	public void setLastProcessedRecords(Integer lstProcessedRecords) {
-		this.lastProcessedRecords = lstProcessedRecords;
+	public void setLastProcessedDateRecords(Integer lstProcessedRecords) {
+		this.lastProcessedDateRecords = lstProcessedRecords;
 	}
 
 
@@ -138,6 +145,16 @@ public class ProcessLog implements Serializable {
 
 	public void setTotalProcessedRecords(Integer totalProcessedRecords) {
 		this.totalProcessedRecords = totalProcessedRecords;
+	}
+
+
+	public String getProcess() {
+		return process;
+	}
+
+
+	public void setProcess(String process) {
+		this.process = process;
 	}
 
 	
