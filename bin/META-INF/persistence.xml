@@ -4,7 +4,7 @@
 		<class>ar.asimov.acumar.ema.model.converter.LocalDateConverter</class>
 		<class>ar.asimov.acumar.ema.model.converter.LocalTimeConverter</class>
 		<class>ar.asimov.acumar.ema.model.Station</class>
-		<class>ar.asimov.acumar.ema.model.WeatherReport</class>
+		<class>ar.asimov.acumar.ema.model.WeatherData</class>
 		<class>ar.asimov.acumar.ema.model.SoilTemperature</class>
 		<class>ar.asimov.acumar.ema.model.ListParameterValue</class>
 		<class>ar.asimov.acumar.ema.model.LeafTemperature</class>
@@ -15,9 +15,10 @@
 		<class>ar.asimov.acumar.ema.model.NewSensor</class>
 		<class>ar.asimov.acumar.ema.model.converter.LocalDateTimeConverter</class>
 		<class>ar.asimov.acumar.ema.model.Configuration</class>
-		<class>ar.asimov.acumar.ema.model.WeatherDailyReport</class>
+		<class>ar.asimov.acumar.ema.model.WeatherSummary</class>
 		<class>ar.asimov.acumar.ema.model.WindDistributionEntry</class>
-		<class>ar.asimov.acumar.ema.model.ProcessLog</class>
+		<class>ar.asimov.acumar.ema.model.WeatherFile</class>
+		<class>ar.asimov.acumar.ema.model.converter.YearMonthConverter</class>
 		<properties>
 			<property name="javax.persistence.schema-generation.database.action" value="create"/>
 			<property name="eclipselink.ddl-generation" value="create-tables"/>

@@ -29,21 +29,9 @@ public class Station implements Serializable{
 	private String name;
 	@Column(name="location")
 	private String location;
-	@Column(name="db_path")
-	private String dbPath;
-	@Column(name="last_processed_date")
-	private LocalDate lastProcessedDate;
-	@Column(name="last_processed_records")
-	private Integer lastProcessedRecords;
-	@Column(name="last_update")
-	private Instant lastUpdate;
-	@Column(name="total_processed_records")
-	private Integer totalProcessedRecords;
-	@Column(name="log_file")
-	private String logFile;
-	@Column(name="iddle_time")
-	private Duration iddleTime;
-
+	@Column(name="directory_path")
+	private String directoryPath;
+	
 	public String getId() {
 		return id;
 	}
@@ -68,65 +56,23 @@ public class Station implements Serializable{
 		this.location = ubicacion;
 	}
 
-	public String getDbPath() {
-		return dbPath;
+	/**
+	 * @return the directoryPath
+	 */
+	public String getDirectoryPath() {
+		return directoryPath;
 	}
 
-	public void setDbPath(String baseDeDatosArchivo) {
-		this.dbPath = baseDeDatosArchivo;
+	/**
+	 * @param directoryPath the directoryPath to set
+	 */
+	public void setDirectoryPath(String directoryPath) {
+		this.directoryPath = directoryPath;
 	}
 
-	public LocalDate getLastProcessedDate() {
-		return this.lastProcessedDate;
-	}
-
-	public void setLastProcessedDate(LocalDate lastProcessedDate) {
-		this.lastProcessedDate = lastProcessedDate;
-	}
-
-	public Instant getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public void setLastUpdate(Instant lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
-
-	public Integer getlastProcessedRecords() {
-		return lastProcessedRecords;
-	}
-
-	public void setlastProcessedRecords(Integer lastProcessedRecords) {
-		this.lastProcessedRecords = lastProcessedRecords;
-	}
-
-	public Integer getTotalProcessedRecords() {
-		return totalProcessedRecords;
-	}
-
-	public void setTotalProcessedRecords(Integer totalProcessedRecords) {
-		this.totalProcessedRecords = totalProcessedRecords;
-	}
-	
-	
-
-	public String getLogFile() {
-		return logFile;
-	}
-
-	public void setLogFile(String logFile) {
-		this.logFile = logFile;
-	}
-
-	public Duration getIddleTime() {
-		return iddleTime;
-	}
-
-	public void setIddleTime(Duration iddleTime) {
-		this.iddleTime = iddleTime;
-	}
-
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -135,6 +81,9 @@ public class Station implements Serializable{
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -152,6 +101,8 @@ public class Station implements Serializable{
 		return true;
 	}
 
+
+	
 	
 	
 }
