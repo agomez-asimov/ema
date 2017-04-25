@@ -15,7 +15,6 @@
  </Logger>
  <Root level="debug">
  <AppenderRef ref="EMA"/>
- <AppenderRef ref="STDOUT" />
  </Root>
  </Loggers>
 </Configuration>

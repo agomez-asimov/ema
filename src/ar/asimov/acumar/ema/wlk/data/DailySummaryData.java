@@ -52,13 +52,13 @@ public class DailySummaryData implements Serializable {
 		summary.setMaxWindSpeed((summary1.hiSpeed.get() / 1e1));
 		summary.setMaxWindSpeedDirection(summary1.dirHiSpeed.get());
 		summary.setMaxWindSpeedTime(unpackTime(summary1.timeValues,14));
-		summary.setMaxAvg10MinWindSpeed(summary1.hi10MinSpeed.get() / 1e1);
+		summary.setMaxAvg10MinWindSpeed((Short.MIN_VALUE == summary1.hi10MinSpeed.get())?null:(summary1.hi10MinSpeed.get() / 1e1));
 		summary.setMaxAvg10MinWindSpeedDirection(summary1.hi10MinDir.get());
 		summary.setMaxAvg10MinWindSpeedTime(unpackTime(summary1.timeValues,15));
 		summary.setDailyPrecipitation((summary1.dailyRainTotal.get() / 1e3));
 		summary.setMaxPrecipitationRate((summary1.hiRainRate.get() / 1e2));
 		summary.setMaxPrecipitationRateTime(unpackTime(summary1.timeValues,16));
-		summary.setDailyUVDose((summary1.dailyUVDose.get() / 1e1));
+		summary.setDailyUVDose((Short.MIN_VALUE == summary1.dailyUVDose.get())?null:(summary1.dailyUVDose.get() / 1e1));
 		summary.setMaxUVDose((Short.MIN_VALUE == summary1.hiUV.get())?null:(summary1.hiUV.get() / 1e1));
 		summary.setMaxUVDoseTime(unpackTime(summary1.timeValues,17));
 		summary.setWindPackets(summary2.numWindPackets.get());
@@ -103,9 +103,9 @@ public class DailySummaryData implements Serializable {
 	}
 	
 	private static final LocalTime[] unpackWindDirectionDistribution(Unsigned8[] directionBins){
-		LocalTime[] times = new LocalTime[directionBins.length];
-		for(int i=0;i<directionBins.length;i++){
-			times[i] = LocalTime.of(directionBins[i].get()/60, directionBins[i].get()%60);
+		LocalTime[] times = new LocalTime[16];
+		for(int i=0;i<times.length;i++){
+			times[i] = unpackTime(directionBins,i);
 		}
 		return times;
 	}

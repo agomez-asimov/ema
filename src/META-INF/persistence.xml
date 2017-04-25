@@ -14,7 +14,6 @@
 		<class>ar.asimov.acumar.ema.model.ExtraHumidity</class>
 		<class>ar.asimov.acumar.ema.model.NewSensor</class>
 		<class>ar.asimov.acumar.ema.model.converter.LocalDateTimeConverter</class>
-		<class>ar.asimov.acumar.ema.model.Configuration</class>
 		<class>ar.asimov.acumar.ema.model.WeatherSummary</class>
 		<class>ar.asimov.acumar.ema.model.WindDistributionEntry</class>
 		<class>ar.asimov.acumar.ema.model.WeatherFile</class>

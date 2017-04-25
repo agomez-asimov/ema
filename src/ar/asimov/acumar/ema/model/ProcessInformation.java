@@ -1,22 +1,31 @@
 package ar.asimov.acumar.ema.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * Entity implementation class for Entity: ProcessInformation
  *
  */
 @Entity
-
+@Table(name="ta_ams_process_information")
 public class ProcessInformation implements Serializable {
 
 	
+
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	public ProcessInformation() {
@@ -24,7 +33,12 @@ public class ProcessInformation implements Serializable {
 	}
 	
 	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long processId;
+	@Column(name="start")
+	private LocalDateTime start;
+	@Column(name="end")
+	private LocalDateTime end;
 	@Column(name="processed_records")
 	private Integer processedRecords;
 	@ManyToOne
@@ -94,6 +108,30 @@ public class ProcessInformation implements Serializable {
 	 */
 	public void setAbnormalTemrminationCause(String abnormalTemrminationCause) {
 		this.abnormalTemrminationCause = abnormalTemrminationCause;
+	}
+	/**
+	 * @return the start
+	 */
+	public LocalDateTime getStart() {
+		return start;
+	}
+	/**
+	 * @param start the start to set
+	 */
+	public void setStart(LocalDateTime start) {
+		this.start = start;
+	}
+	/**
+	 * @return the end
+	 */
+	public LocalDateTime getEnd() {
+		return end;
+	}
+	/**
+	 * @param end the end to set
+	 */
+	public void setEnd(LocalDateTime end) {
+		this.end = end;
 	}	
-   
+	
 }

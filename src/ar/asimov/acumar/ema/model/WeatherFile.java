@@ -1,7 +1,8 @@
 package ar.asimov.acumar.ema.model;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -128,13 +130,17 @@ public class WeatherFile implements Serializable {
 	@Column(name = "last_day_records")
 	private Integer lastDayRecords;
 	@Column(name = "date_updated")
-	private Instant dateUpdated;
+	private LocalDateTime dateUpdated;
 	@Column(name = "date_created")
-	private Instant dateCreated;
+	private LocalDateTime dateCreated;
 	@Transient
 	private List<WeatherSummary> summaries;
 	@Transient
 	private List<WeatherData> data;
+	
+	@PostLoad
+	protected void onPostLoad(){
+	}
 
 	public WeatherFile() {
 		super();
@@ -218,7 +224,7 @@ public class WeatherFile implements Serializable {
 	/**
 	 * @return the dateUpdated
 	 */
-	public Instant getDateUpdated() {
+	public LocalDateTime getDateUpdated() {
 		return dateUpdated;
 	}
 
@@ -226,14 +232,14 @@ public class WeatherFile implements Serializable {
 	 * @param dateUpdated
 	 *            the dateUpdated to set
 	 */
-	public void setDateUpdated(Instant dateUpdated) {
+	public void setDateUpdated(LocalDateTime dateUpdated) {
 		this.dateUpdated = dateUpdated;
 	}
 
 	/**
 	 * @return the dateCreated
 	 */
-	public Instant getDateCreated() {
+	public LocalDateTime getDateCreated() {
 		return dateCreated;
 	}
 
@@ -241,7 +247,7 @@ public class WeatherFile implements Serializable {
 	 * @param dateCreated
 	 *            the dateCreated to set
 	 */
-	public void setDateCreated(Instant dateCreated) {
+	public void setDateCreated(LocalDateTime dateCreated) {
 		this.dateCreated = dateCreated;
 	}
 	

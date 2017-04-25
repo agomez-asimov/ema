@@ -3,9 +3,11 @@ package ar.asimov.acumar.ema.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -241,7 +243,7 @@ public class WeatherSummary implements Serializable {
 	@Column(name="integrated_heat_dd65")
 	private Double integratedHeatDD65;
 	//TODO: add support for Web Bulb fields currently not supported
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL)
 	@JoinColumns({
 		@JoinColumn(name="station_id",referencedColumnName="station_id"),
 		@JoinColumn(name="date", referencedColumnName="date"),
@@ -964,15 +966,19 @@ public class WeatherSummary implements Serializable {
 	public void setIntegratedHeatDD65(Double integratedHeatDD65) {
 		this.integratedHeatDD65 = integratedHeatDD65;
 	}
-
-
-	public List<WindDistributionEntry> getWindDirectionDistribution() {
-		return windDirectionDistribution;
+	
+	public void addWindDistribution(WindDistributionEntry entry){
+		if(null == this.windDirectionDistribution){
+			this.windDirectionDistribution = new ArrayList<>();
+		}
+		entry.setStation(this.getStation());
+		entry.setDate(this.getDate());
+		this.windDirectionDistribution.add(entry);
 	}
 
 
-	public void setWindDirectionDistribution(List<WindDistributionEntry> windDirectionDistribution) {
-		this.windDirectionDistribution = windDirectionDistribution;
+	public List<WindDistributionEntry> getWindDirectionDistribution() {
+		return Collections.unmodifiableList(windDirectionDistribution);
 	}
 
 

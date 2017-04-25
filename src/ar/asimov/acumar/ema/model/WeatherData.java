@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -138,9 +139,11 @@ public class WeatherData implements Serializable {
 	@Column(name="max_wind_speed")
 	private Double maxWindSpeed;
 	@Column(name="wind_dir")
-	private Short windDirection;
+	@Enumerated
+	private WindDirection windDirection;
 	@Column(name="max_wind_dir")
-	private Short maxWindDirection;
+	@Enumerated
+	private WindDirection maxWindDirection;
 	@Column(name="wind_samples_num")
 	private Short windSamplesNumber;
 	@Column(name="solar_rad")
@@ -361,19 +364,19 @@ public class WeatherData implements Serializable {
 		this.maxWindSpeed = maxWindSpeed;
 	}
 
-	public Short getWindDirection() {
+	public WindDirection getWindDirection() {
 		return windDirection;
 	}
 
-	public void setWindDirection(Short windDirection) {
+	public void setWindDirection(WindDirection windDirection) {
 		this.windDirection = windDirection;
 	}
 
-	public Short getMaxWindDirection() {
+	public WindDirection getMaxWindDirection() {
 		return maxWindDirection;
 	}
 
-	public void setMaxWindDirection(Short maxWindDirection) {
+	public void setMaxWindDirection(WindDirection maxWindDirection) {
 		this.maxWindDirection = maxWindDirection;
 	}
 

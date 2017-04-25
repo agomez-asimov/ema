@@ -12,6 +12,7 @@ import ar.asimov.acumar.ema.model.SoilMoisture;
 import ar.asimov.acumar.ema.model.SoilTemperature;
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherData;
+import ar.asimov.acumar.ema.model.WindDirection;
 import ar.asimov.acumar.ema.wlk.data.DailyWeatherData;
 
 public class WeatherDataMapper {
@@ -43,8 +44,8 @@ public class WeatherDataMapper {
 		result.setET(data.getET());
 		result.setIconFlags(data.getIconFlags());
 		result.setRainCollectorType(data.getRainCollectorType());
-		result.setWindDirection(data.getWindDirection());
-		result.setMaxWindDirection(data.getMaxWindDirection());
+		result.setWindDirection(getWindDirection(data.getWindDirection()));
+		result.setMaxWindDirection(getWindDirection(data.getMaxWindDirection()));
 		result.setMoreFlags(data.getMoreFlags());
 		List<LeafTemperature> localLeafTemperature = new ArrayList<>();
 		for (int i = 0; i < data.getLeafTemperature().size(); i++) {
@@ -124,6 +125,48 @@ public class WeatherDataMapper {
 		}
 		result.setExtraHumidity(localExtraHumidity);
 		return result;
+	}
+	
+	private static WindDirection getWindDirection(Short value){
+		if(null == value){
+			return WindDirection.UNKNOWN;
+		}
+		switch(value){
+		case 0:
+			return WindDirection.N;
+		case 1: 
+			return WindDirection.NNE;
+		case 2:
+			return WindDirection.NE;
+		case 3:
+			return WindDirection.ENE;
+		case 4:
+			return WindDirection.E;
+		case 5:
+			return WindDirection.ESE;
+		case 6:
+			return WindDirection.SE;
+		case 7:
+			return WindDirection.SSE;
+		case 8:
+			return WindDirection.S;
+		case 9:
+			return WindDirection.SSW;
+		case 10:
+			return WindDirection.SW;
+		case 11:
+			return WindDirection.WSW;
+		case 12:
+			return WindDirection.W;
+		case 13:
+			return WindDirection.WNW;
+		case 14:
+			return WindDirection.NW;
+		case 15:
+			return WindDirection.NNW;
+		default:
+			return WindDirection.UNKNOWN;
+		}
 	}
 	
 

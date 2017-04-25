@@ -2,9 +2,8 @@
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherFile;
@@ -19,14 +18,15 @@ public class WeatherMigrationApplication {
 	public static void main(String[] args) {
 		final ArrayBlockingQueue<WeatherFile> files = new ArrayBlockingQueue<>(REPORTS_QUEUE_CAPACITY);
 		final List<Station> stations = DAOManager.getStationDAO().fetchAll();
-		final ScheduledExecutorService executors = Executors.newScheduledThreadPool(stations.size()*2);
+		final ExecutorService executors = Executors.newFixedThreadPool(stations.size()*2);
 		for(Station station : stations){
 			WeatherFile lastFile = DAOManager.getFileDAO().fetchLast(station);
 			WeatherFileProducer producer = new WeatherFileProducer(station,files,lastFile);
-			executors.schedule(producer, 0, TimeUnit.NANOSECONDS);
+			executors.execute(producer);
 			WeatherFileConsumer consumer = new WeatherFileConsumer(files);
-			executors.schedule(consumer, 5, TimeUnit.SECONDS);
+			executors.execute(consumer);	
 		}
+		executors.shutdown();
 	}
 	
 }

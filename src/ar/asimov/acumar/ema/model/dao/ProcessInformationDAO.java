@@ -3,8 +3,13 @@ package ar.asimov.acumar.ema.model.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import ar.asimov.acumar.ema.model.ProcessInformation;
+import ar.asimov.acumar.ema.model.WeatherSummary;
 
 public class ProcessInformationDAO {
 	
@@ -16,7 +21,12 @@ public class ProcessInformationDAO {
 	}
 	
 	public List<ProcessInformation> fetchAll(){
-		return null;
+		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<ProcessInformation> cq = cb.createQuery(ProcessInformation.class);
+		Root<ProcessInformation> root = cq.from(ProcessInformation.class);
+		cq.select(root);
+		TypedQuery<ProcessInformation> tq = this.entityManager.createQuery(cq);
+		return tq.getResultList();
 	}
 	
 	public void create(ProcessInformation processInformation){

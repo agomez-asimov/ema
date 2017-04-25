@@ -1,8 +1,6 @@
 package ar.asimov.acumar.ema.model.helper;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherSummary;
@@ -87,11 +85,8 @@ public class WeatherSummaryMapper {
 		result.setIntegratedHeatDD65(summary.getIntegratedHeatDD65());
 		result.setIntegratedCoolDD65(summary.getIntegratedCoolDD65());
 		LocalTime[] windDirectionDistribution = summary.getWindDirectionDistribution();
-		List<WindDistributionEntry> windDistributions = new ArrayList<>();
 		for(int i = 0;i<windDirectionDistribution.length;i++){
 			WindDistributionEntry entry = new WindDistributionEntry();
-			entry.setDate(result.getDate());
-			entry.setStation(result.getStation());
 			switch(i){
 			case 0:
 				entry.setDirection(WindDirection.N);
@@ -143,9 +138,8 @@ public class WeatherSummaryMapper {
 				break;
 			}
 			entry.setTime(windDirectionDistribution[i]);
-			windDistributions.add(new WindDistributionEntry());
+			result.addWindDistribution(entry);
 		}
-		result.setWindDirectionDistribution(windDistributions);
 		return result;
 	}
 
