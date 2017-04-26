@@ -67,7 +67,11 @@ public class DAOManager {
 
 	public static void close() {
 		EntityManagerHelper.closeEntityManager();
-		
+		STATION_DAO.remove();
+		FILE_DAO.remove();
+		SUMMARY_DAO.remove();
+		DATA_DAO.remove();
+		PROCESS_INFORMATION_DAO.remove();
 	}
 
 }

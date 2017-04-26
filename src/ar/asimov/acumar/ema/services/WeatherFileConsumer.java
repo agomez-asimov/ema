@@ -2,6 +2,7 @@ package ar.asimov.acumar.ema.services;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,7 +13,7 @@ import ar.asimov.acumar.ema.model.WeatherSummary;
 import ar.asimov.acumar.ema.model.dao.DAOManager;
 
 
-public class WeatherFileConsumer implements Runnable {
+public class WeatherFileConsumer implements Callable<Integer> {
 
 	private static final Log LOGGER = LogFactory.getLog(WeatherFileConsumer.class); 
 	private static final int COMMIT_LIMIT = 1000;
@@ -43,11 +44,13 @@ public class WeatherFileConsumer implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public Integer call() throws Exception {
+		Integer localTotalProcessedRecords = 0;
 		try {
 			if(this.getLogger().isDebugEnabled()){
 				this.getLogger().debug("New consumer started");
 			}
+			
 			while(!this.stop) {
 				WeatherFile file = this.consume();
 				if(this.getLogger().isDebugEnabled()){
@@ -65,7 +68,7 @@ public class WeatherFileConsumer implements Runnable {
 					}
 					DAOManager.getDataDAO().create(data);
 					processedEntities++;
-					if(processedEntities == SLEEP_LIMIT && Thread.activeCount()>=2){
+					if(processedEntities == SLEEP_LIMIT && Thread.activeCount()>=Runtime.getRuntime().availableProcessors()){
 						Thread.sleep(1000);
 					}
 					if(processedEntities == COMMIT_LIMIT){
@@ -73,6 +76,7 @@ public class WeatherFileConsumer implements Runnable {
 						DAOManager.beginTransaction();
 						processedEntities = 0;
 					}
+					localTotalProcessedRecords++;
 				}
 				for(WeatherSummary summary : file.getWeatherSummaries()){
 					if(DAOManager.getSummaryDAO().fetch(summary.getStation(),summary.getDate())!=null){
@@ -88,8 +92,8 @@ public class WeatherFileConsumer implements Runnable {
 						DAOManager.getSummaryDAO().create(summary);
 						processedEntities++;
 					}
-					if(processedEntities == SLEEP_LIMIT  && Thread.activeCount() >= 2){
-						Thread.sleep(1000);
+					if(processedEntities == SLEEP_LIMIT  && Thread.activeCount() >= Runtime.getRuntime().availableProcessors()){
+						Thread.sleep(500);
 					}
 					if(processedEntities == COMMIT_LIMIT){
 						DAOManager.commitTransaction();
@@ -117,15 +121,18 @@ public class WeatherFileConsumer implements Runnable {
 					this.getLogger().debug("Pushing changes to DB");
 				}
 			}
-		} catch (InterruptedException e) {
+			return localTotalProcessedRecords;
+		} catch (Exception e) {
 			DAOManager.rollBackTransaction();
 			this.getLogger().error("An error has been thrown",e);
+			return localTotalProcessedRecords;
 			//HANDLE FREFRE
 		} finally {
 			DAOManager.close();
 			if(this.getLogger().isDebugEnabled()){
 				this.getLogger().debug("File consumer finished");
 			}
+		
 		}		
 	}
 	

@@ -86,7 +86,6 @@ public class WeatherDataDAO {
 
 	public void create(WeatherData weatherMeasure) {
 		this.entityManager.persist(weatherMeasure);
-		
 	}
 	
 }

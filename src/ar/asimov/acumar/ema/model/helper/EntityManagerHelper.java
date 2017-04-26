@@ -30,7 +30,7 @@ public class EntityManagerHelper {
 		EntityManager em = threadLocal.get();
 		if(null != em){
 			em.close();
-			threadLocal.set(null);
+			threadLocal.remove();;
 		}
 	}
 	
