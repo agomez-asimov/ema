@@ -51,7 +51,11 @@ public class WeatherFileConsumer implements Runnable {
 			while(!this.stop) {
 				WeatherFile file = this.consume();
 				if(this.getLogger().isDebugEnabled()){
-					this.getLogger().debug("Processing file "+file.getPeriod().toString()+".wlk for Station "+file.getStation().getId());
+					if(null == file.getStation()){
+						this.getLogger().debug("A null station has been provided for the file.");
+					}else{
+						this.getLogger().debug("Processing file "+file.getPeriod()+".wlk for Station "+file.getStation().getId());
+					}
 				}
 				DAOManager.beginTransaction();
 				int processedEntities = 0;
@@ -62,7 +66,7 @@ public class WeatherFileConsumer implements Runnable {
 					DAOManager.getDataDAO().create(data);
 					processedEntities++;
 					if(processedEntities == SLEEP_LIMIT && Thread.activeCount()>=2){
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					}
 					if(processedEntities == COMMIT_LIMIT){
 						DAOManager.commitTransaction();
@@ -85,7 +89,7 @@ public class WeatherFileConsumer implements Runnable {
 						processedEntities++;
 					}
 					if(processedEntities == SLEEP_LIMIT  && Thread.activeCount() >= 2){
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					}
 					if(processedEntities == COMMIT_LIMIT){
 						DAOManager.commitTransaction();

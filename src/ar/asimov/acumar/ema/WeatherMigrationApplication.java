@@ -24,7 +24,7 @@ public class WeatherMigrationApplication {
 			WeatherFileProducer producer = new WeatherFileProducer(station,files,lastFile);
 			executors.execute(producer);
 			WeatherFileConsumer consumer = new WeatherFileConsumer(files);
-			executors.execute(consumer);	
+			executors.execute(consumer);
 		}
 		executors.shutdown();
 	}

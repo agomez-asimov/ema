@@ -80,7 +80,9 @@ public class WeatherFileProducer implements Runnable {
 				}
 				
 			});
+			///*
 			int processedRecords = 0;
+			//*/
 			for (Path wlkFile : wlkFiles) {
 				WLinkFileReader reader = new WLinkFileReader(wlkFile.toString());
 				if(this.getLogger().isDebugEnabled()){
@@ -94,16 +96,16 @@ public class WeatherFileProducer implements Runnable {
 						currentFile.setTotalRecords(reader.getTotalRecords());
 					int startDayIndex = (null != this.lastFileProcessed && this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()))?this.lastFileProcessed.getLastDayIndex():1;
 					for (int i = startDayIndex; i <= currentFile.getPeriod().atEndOfMonth().getDayOfMonth(); i++) {
-						int lastDayRecords = (null != this.lastFileProcessed && this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()))?this.lastFileProcessed.getLastDayIndex():0;
+						int lastDayRecords = (null != this.lastFileProcessed && this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()))?this.lastFileProcessed.getLastDayRecords():0;
 						if (reader.getRecordsInDay(i) > lastDayRecords) {
 							DailySummaryData dailySummary = reader.readDay(i);
 							WeatherSummary summary = WeatherSummaryMapper.map(dailySummary,this.getStation());
 							currentFile.addWetaherSummary(summary);
+							///*
 							processedRecords++;
 							if(processedRecords == SLEEP_LIMIT && Thread.activeCount() >= 2){
 								Thread.sleep(500);
-							}
-		
+							}//*/		
 							if(this.getLogger().isDebugEnabled()){
 								this.getLogger().debug("Added summary ["+summary.getStation().getId()+", "+summary.getDate()+"]");
 							}
@@ -113,16 +115,18 @@ public class WeatherFileProducer implements Runnable {
 						for (int j = lastDayRecords; j < reader.getRecordsInDay(i); j++) {
 							DailyWeatherData record = reader.read(i, j);
 							WeatherData data = WeatherDataMapper.map(record,this.getStation());
-							currentFile.addWeatherData(data);
-							if(this.getLogger().isDebugEnabled()){
-								this.getLogger().debug("Added data ["+data.getStation().getId()+", "+data.getDate()+", "+data.getStartTime().toString()+"]");
+							if(!currentFile.getWeatherData().contains(data)){
+								currentFile.addWeatherData(data);
 							}
-		
+							///*
 							processedRecords++;
 							if(processedRecords == SLEEP_LIMIT && Thread.activeCount() >= 2){
 								Thread.sleep(500);
 							}
-		
+							//*/
+							if(this.getLogger().isDebugEnabled()){
+								this.getLogger().debug("Added data ["+data.getStation().getId()+", "+data.getDate()+", "+data.getStartTime().toString()+"]");
+							}
 							localTotalProcessedRecords++;
 						}
 					}
@@ -138,19 +142,15 @@ public class WeatherFileProducer implements Runnable {
 				reader.close();
 			}
 			if(localTotalProcessedRecords == 0){
-				
 				//SEND MAIL NO RECORDS HAS BEEN PROCESSED
 			}
 			if(this.getLogger().isDebugEnabled()){
 				this.getLogger().debug("Ending process for Station "+this.getStation().getId()+". Readed "+localTotalProcessedRecords+" records.");
 			}
-		}catch(IOException e){
+		}catch(Exception e){
 			this.getLogger().error("An exception has been thrown",e);
 			processInformation.setAbnormalTermination(true);
 			processInformation.setAbnormalTemrminationCause(e.getMessage());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}finally{
 			processInformation.setEnd(LocalDateTime.now());
 			processInformation.setProcessedRecords(localTotalProcessedRecords);
@@ -167,9 +167,12 @@ public class WeatherFileProducer implements Runnable {
 			}
 		}
 		synchronized(this.files){
-			this.files.add(report);
+			while(!this.files.offer(report)){
+				this.files.wait();
+			}
 			this.files.notifyAll();
 		}
+
 	}
 	
 }
