@@ -77,7 +77,6 @@ public class WeatherMigrationApplication {
 					message.setMessage("El proceso de migracion de datos iniciado a las "+ processInformation.getStart().format(DateTimeFormatter.ofPattern("dd/MM/Y hh:mm:ss a"))+ " y finalizado a las "+processInformation.getEnd().format(DateTimeFormatter.ofPattern("dd/MM//Y hh:mm:ss a"))+" para la estacion "+ station.getName() +" no ha producido ningun registro");
 					sendMail(message);
 				}
-				NotificationService.getInstance().terminate();
 				DAOManager.beginTransaction();
 				DAOManager.getProcessInformationDAO().create(processInformation);
 				DAOManager.commitTransaction();
@@ -106,7 +105,7 @@ public class WeatherMigrationApplication {
 			email.getMailSession().getProperties().put("mail.smtp.starttls.enable", "true");
 			email.setFrom("agomez@acumar.gov.ar");
 			email.addTo("agomez@acumar.gov.ar");
-			//email.addTo("plema@acumar.gov.ar");
+			email.addTo("plema@acumar.gov.ar");
 			email.setSubject(message.getTitle());
 			email.setMsg(message.getMessage());
 			email.send();
