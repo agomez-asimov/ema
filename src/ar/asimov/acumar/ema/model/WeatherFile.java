@@ -1,7 +1,6 @@
 package ar.asimov.acumar.ema.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;

@@ -1,9 +1,6 @@
 package ar.asimov.acumar.ema.model;
 
 import java.io.Serializable;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -31,6 +28,8 @@ public class Station implements Serializable{
 	private String location;
 	@Column(name="directory_path")
 	private String directoryPath;
+	@Column(name="active")
+	private Boolean active;
 	
 	public String getId() {
 		return id;
@@ -68,6 +67,20 @@ public class Station implements Serializable{
 	 */
 	public void setDirectoryPath(String directoryPath) {
 		this.directoryPath = directoryPath;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 
 	/* (non-Javadoc)

@@ -97,7 +97,11 @@ public class WeatherFileProducer implements Callable<Integer> {
 			if (this.getLogger().isDebugEnabled()) {
 				this.getLogger().debug("Processing file " + wlkFile.toString());
 			}
-			if (null == this.lastFileProcessed || !this.lastFileProcessed.getPeriod().isAfter(reader.getFilePeriod())) {
+			if ((null != this.lastFileProcessed
+					&& ((this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()) && this.lastFileProcessed
+							.getLastDayRecords() < reader.getRecordsInDay(this.lastFileProcessed.getLastDayIndex()))
+							|| this.lastFileProcessed.getPeriod().isBefore(reader.getFilePeriod())))
+					|| null == this.lastFileProcessed) {
 				WeatherFile currentFile;
 				currentFile = new WeatherFile();
 				currentFile.setStation(this.getStation());
@@ -121,30 +125,47 @@ public class WeatherFileProducer implements Callable<Integer> {
 							Thread.sleep(1000);
 						} // */
 						if (this.getLogger().isDebugEnabled()) {
-							this.getLogger().debug(
-									"Added summary [" + summary.getStation().getId() + ", " + summary.getDate() + "]");
+							this.getLogger().debug("Processed summary record " + i + " [" + summary.getStation().getId()
+									+ ", " + summary.getDate() + "]");
 						}
 						currentFile.setLastDayIndex(i);
 						currentFile.setLastDayRecords(reader.getRecordsInDay(i));
 					}
 					for (int j = lastDayRecords; j < reader.getRecordsInDay(i); j++) {
 						DailyWeatherData record = reader.read(i, j);
-						WeatherData data = WeatherDataMapper.map(record, this.getStation());
-						if (!currentFile.getWeatherData().contains(data)) {
-							currentFile.addWeatherData(data);
+						if (null == record) {
+							this.getLogger()
+									.debug("Record " + j + " of day " + i + " in file "
+											+ currentFile.getPeriod().toString() + " is null."
+											+ " Total records for day " + reader.getRecordsInDay(i));
+						} else {
+							WeatherData data = WeatherDataMapper.map(record, this.getStation());
+							if (!currentFile.getWeatherData().contains(data)) {
+								currentFile.addWeatherData(data);
+							}
+							/// *
+							processedRecords++;
+
+							if (processedRecords == SLEEP_LIMIT
+									&& Thread.activeCount() >= Runtime.getRuntime().availableProcessors()) {
+								Thread.sleep(1000);
+							}
+							// */
+							if (this.getLogger().isDebugEnabled()) {
+								this.getLogger()
+										.debug("Processed data record " + j + " of day " + i + "["
+												+ data.getStation().getId() + ", " + data.getDate() + ", "
+												+ data.getStartTime().toString() + "]");
+							}
+							localTotalProcessedRecords++;
 						}
-						/// *
-						processedRecords++;
-						if (processedRecords == SLEEP_LIMIT
-								&& Thread.activeCount() >= Runtime.getRuntime().availableProcessors()) {
-							Thread.sleep(1000);
-						}
-						// */
-						if (this.getLogger().isDebugEnabled()) {
-							this.getLogger().debug("Added data [" + data.getStation().getId() + ", " + data.getDate()
-									+ ", " + data.getStartTime().toString() + "]");
-						}
-						localTotalProcessedRecords++;
+					}
+				}
+				if (null != this.lastFileProcessed
+						&& this.lastFileProcessed.getPeriod().equals(currentFile.getPeriod())) {
+					if (null == currentFile.getLastDayIndex() && null == currentFile.getLastDayRecords()) {
+						currentFile.setLastDayIndex(this.lastFileProcessed.getLastDayIndex());
+						currentFile.setLastDayRecords(this.lastFileProcessed.getLastDayIndex());
 					}
 				}
 				this.produce(currentFile);

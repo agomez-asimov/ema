@@ -1,7 +1,5 @@
 package ar.asimov.acumar.ema.wlk.test;
 
-import static org.junit.Assert.*;
-
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 

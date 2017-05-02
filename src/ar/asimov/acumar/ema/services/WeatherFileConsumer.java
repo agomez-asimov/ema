@@ -50,7 +50,8 @@ public class WeatherFileConsumer implements Callable<Integer> {
 			if(this.getLogger().isDebugEnabled()){
 				this.getLogger().debug("New consumer started");
 			}
-			
+			Thread.sleep(1000);
+			this.stop = (this.files.isEmpty());
 			while(!this.stop) {
 				WeatherFile file = this.consume();
 				if(this.getLogger().isDebugEnabled()){
@@ -115,24 +116,27 @@ public class WeatherFileConsumer implements Callable<Integer> {
 					file.setDateUpdated(LocalDateTime.now());
 					DAOManager.getFileDAO().create(file);
 				}
-				DAOManager.commitTransaction();
-				this.stop = (this.files.isEmpty());
-				if(this.getLogger().isDebugEnabled()){
-					this.getLogger().debug("Pushing changes to DB");
+				if(DAOManager.isTransactionActive()){
+					if(this.getLogger().isDebugEnabled()){
+						this.getLogger().debug("Pushing changes to DB");
+					}
+					DAOManager.commitTransaction();
 				}
+				this.stop = (this.files.isEmpty());
 			}
 			return localTotalProcessedRecords;
 		} catch (Exception e) {
-			DAOManager.rollBackTransaction();
+			if(DAOManager.isTransactionActive()){
+				DAOManager.rollBackTransaction();
+			}
 			this.getLogger().error("An error has been thrown",e);
-			return localTotalProcessedRecords;
+			throw e;
 			//HANDLE FREFRE
 		} finally {
 			DAOManager.close();
 			if(this.getLogger().isDebugEnabled()){
 				this.getLogger().debug("File consumer finished");
 			}
-		
 		}		
 	}
 	

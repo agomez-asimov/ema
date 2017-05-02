@@ -1,7 +1,9 @@
 package ar.asimov.acumar.ema.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Entity implementation class for Entity: ExtraTemperature

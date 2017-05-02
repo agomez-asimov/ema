@@ -73,5 +73,9 @@ public class DAOManager {
 		DATA_DAO.remove();
 		PROCESS_INFORMATION_DAO.remove();
 	}
+	
+	public static boolean isTransactionActive(){
+		return EntityManagerHelper.getEntityManager().getTransaction().isActive();
+	}
 
 }

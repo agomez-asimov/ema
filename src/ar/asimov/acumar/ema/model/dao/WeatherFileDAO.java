@@ -11,7 +11,6 @@ import javax.persistence.metamodel.EntityType;
 
 import ar.asimov.acumar.ema.model.Station;
 import ar.asimov.acumar.ema.model.WeatherFile;
-import ar.asimov.acumar.ema.model.WeatherSummary;
 
 public class WeatherFileDAO {
 	

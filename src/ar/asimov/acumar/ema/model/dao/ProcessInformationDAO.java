@@ -9,7 +9,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import ar.asimov.acumar.ema.model.ProcessInformation;
-import ar.asimov.acumar.ema.model.WeatherSummary;
 
 public class ProcessInformationDAO {
 	
