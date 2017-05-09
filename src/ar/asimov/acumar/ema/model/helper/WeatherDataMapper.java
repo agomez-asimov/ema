@@ -18,6 +18,8 @@ import ar.asimov.acumar.ema.wlk.data.DailyWeatherData;
 public class WeatherDataMapper {
 	
 	public static final WeatherData map(DailyWeatherData data,Station station){
+		if(null == station) throw new IllegalArgumentException("Station can't be null WeatherDataMapper.map()");
+		if(null == data) throw new IllegalArgumentException("DailyWeatherData can't be null WeatherDataMapper.map()");
 		WeatherData result = new WeatherData();
 		result.setDate(data.getDate());
 		result.setStation(station);

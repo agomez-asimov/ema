@@ -1,5 +1,6 @@
 package ar.asimov.acumar.ema.model.dao;
 
+import ar.asimov.acumar.ema.exception.DAOException;
 import ar.asimov.acumar.ema.model.helper.EntityManagerHelper;
 
 public class DAOManager {
@@ -52,17 +53,28 @@ public class DAOManager {
 		return PROCESS_INFORMATION_DAO.get();
 	}
 
-	public static void beginTransaction() {
-		EntityManagerHelper.beginTransaction();
-		
+	public static void beginTransaction() throws DAOException{
+		try{
+			EntityManagerHelper.beginTransaction();
+		}catch(Exception e){
+			throw new DAOException("An exception has been thrown while attempting to start a new transaction",e);
+		}
 	}
 
-	public static void commitTransaction() {
-		EntityManagerHelper.commitTransaction();
+	public static void commitTransaction() throws DAOException{
+		try{
+			EntityManagerHelper.commitTransaction();
+		}catch(Exception e){
+			throw new DAOException("An exception has been thrown while attempting to commit a transaction",e);
+		}
 	}
 
-	public static void rollBackTransaction() {
-		EntityManagerHelper.rollbackTransaction();
+	public static void rollBackTransaction() throws DAOException{
+		try{
+			EntityManagerHelper.rollbackTransaction();
+		}catch(Exception e){
+			throw new DAOException("An exception has been thrown whilea attempting to rollback a transaction",e);
+		}
 	}
 
 	public static void close() {
@@ -75,7 +87,7 @@ public class DAOManager {
 	}
 	
 	public static boolean isTransactionActive(){
-		return EntityManagerHelper.getEntityManager().getTransaction().isActive();
+		return (EntityManagerHelper.getEntityManager().getTransaction() != null && EntityManagerHelper.getEntityManager().getTransaction().isActive());
 	}
 
 }

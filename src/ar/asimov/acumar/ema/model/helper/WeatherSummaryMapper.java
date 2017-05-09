@@ -11,6 +11,8 @@ import ar.asimov.acumar.ema.wlk.data.DailySummaryData;
 public class WeatherSummaryMapper {
 	
 	public static final WeatherSummary map(DailySummaryData summary, Station station){
+		if(null == station) throw new IllegalArgumentException("Station can't be null WeatherSummaryMapper.map()");
+		if(null == summary) throw new IllegalArgumentException("DailySummaryData can't be null WeatherSummaryMapper.map()");
 		final WeatherSummary result = new WeatherSummary();
 		result.setDate(summary.getDate());
 		result.setStation(station);

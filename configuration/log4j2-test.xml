@@ -10,10 +10,10 @@
  </Console>
  </Appenders>
  <Loggers>
- <Logger name="org.apache.log4j.xml" level="debug">
+ <Logger name="org.apache.log4j.xml" level="info">
  <AppenderRef ref="EMA"/>
  </Logger>
- <Root level="debug">
+ <Root level="info">
  <AppenderRef ref="EMA"/>
  </Root>
  </Loggers>

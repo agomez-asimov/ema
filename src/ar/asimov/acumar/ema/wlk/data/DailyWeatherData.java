@@ -9,85 +9,89 @@ import java.util.List;
 import ar.asimov.acumar.ema.wlk.record.WeatherDataRecord;
 import javolution.io.Struct.Unsigned16;
 
-public class DailyWeatherData implements Serializable{
+public class DailyWeatherData implements Serializable {
 
-	
-	public static final DailyWeatherData from(LocalDate date,WeatherDataRecord record){
-		 DailyWeatherData data = new DailyWeatherData();
-		 data.setDate(date);
-		 data.setStartTime(unpackTime((short)(record.packedTime.get() - record.archiveInterval.get())));
-		 data.setEndTime(unpackTime(record.packedTime.get()));
-		 data.setIconFlags(record.iconFlags.get());
-		 data.setMoreFlags(record.moreFlags.get());
-		 data.setOutsideTemperature((record.outsideTemp.get() / 1e1));
-		 data.setMaxOutsideTemperature((record.hiOutsideTemp.get() / 1e1));
-		 data.setMinOutsideTemperature((record.lowOutsideTemp.get() / 1e1));
-		 data.setInsideTemperature((record.insideTemp.get() / 1e1));
-		 data.setPressure((record.insideTemp.get() / 1e3));
-		 data.setOutsideHumidity((record.outsiedHum.get() / 1e1));
-		 data.setInsideHumidity((record.insideHum.get() / 1e1));
-		 data.setRainCollectorType(unpackRainCollector(record.rain));
-		 data.setPrecipitation(unpackRainClicks(record.rain));
-		 data.setMaxPrecipitationRate(record.hiRainRate.get());
-		 data.setWindSpeed((record.windSpeed.get() / 1e1));
-		 data.setWindDirection((record.windDirection.get() == 255)?null:record.windDirection.get());
-		 data.setMaxWindSpeed((record.hiWindSpeed.get() / 1e1));
-		 data.setMaxWindDirection((255 == record.hiWindDirection.get())?null:record.hiWindDirection.get());
-		 data.setWindSamplesNumber(record.numWindSamples.get());
-		 data.setSolarRadiation((Short.MIN_VALUE == record.solarRad.get())?null:record.solarRad.get());
-		 data.setMaxSolarRadiation((Short.MIN_VALUE == record.hiSolarRad.get())?null:record.hiSolarRad.get());
-		 data.setUVIndex((255 != record.UV.get())?null:(record.UV.get() / 1e1));
-		 data.setMaxUVIndex((255 != record.hiUV.get())?null:(record.hiUV.get() / 1e1));
-		 for(int i = 0; i< record.newSensors.length;i++){
-			 if(Short.MIN_VALUE != record.newSensors[i].get()){
-				 data.addNewSensor(record.newSensors[i].get());
-			 }
-		 }
-		 for(int i = 0; i< record.leafTemp.length;i++){
-			 if(0 >record.leafTemp[i].get()){
-				 data.addLeafTemperature((short)(record.leafTemp[i].get() - 90));
-			 }
-		 }
-		 data.setExtraRadiation((Short.MIN_VALUE == record.extraRad.get())?null:record.extraRad.get());
-		 data.setET((record.ET.get() / 1e3));
-		 for(int i = 0;i<record.soilTemp.length;i++){
-			  if(255 != record.soilTemp[i].get()){
-				  data.addSoilTemperature((short)(record.soilTemp[i].get() - 90));
-			  }
-		 }
-		 for(int i = 0;i<record.soilMoisture.length;i++){
-			 if(255 != record.soilMoisture[i].get()){
-				 data.addSoilMoisture(record.soilMoisture[i].get());
-			 }
-		 }
-		 for(int i = 0;i<record.leafWetness.length;i++){
-			 if(255 != record.leafWetness[i].get()){
-				 data.addLeafWetness(record.leafWetness[i].get());
-			 }
-		 }
-		 for(int i = 0;i<record.extraTemp.length;i++){
-			 if(255 != record.extraTemp[i].get()){
-				 data.addExtraTemperature((short)(record.extraTemp[i].get() - 90));
-			 }
-		 }
-		 for(int i = 0;i<record.extraHum.length;i++){
-			 if(255 != record.extraHum[i].get()){
-				 data.addExtraHumidity(record.extraHum[i].get());
-			 }
-		 }
-		 return data;
+	public static final DailyWeatherData from(LocalDate date, WeatherDataRecord record) {
+		if (null == date)
+			throw new IllegalArgumentException("Date can't be null for DailyWeatherData.from()");
+		if (null == record)
+			throw new IllegalArgumentException("WeatherDataRecord can't be null for DailyWeatherData.from()");
+		DailyWeatherData data = new DailyWeatherData();
+		data.setDate(date);
+		data.setStartTime(unpackTime((short) (record.packedTime.get() - record.archiveInterval.get())));
+		data.setEndTime(unpackTime(record.packedTime.get()));
+		data.setIconFlags(record.iconFlags.get());
+		data.setMoreFlags(record.moreFlags.get());
+		data.setOutsideTemperature((record.outsideTemp.get() / 1e1));
+		data.setMaxOutsideTemperature((record.hiOutsideTemp.get() / 1e1));
+		data.setMinOutsideTemperature((record.lowOutsideTemp.get() / 1e1));
+		data.setInsideTemperature((record.insideTemp.get() / 1e1));
+		data.setPressure((record.insideTemp.get() / 1e3));
+		data.setOutsideHumidity((record.outsiedHum.get() / 1e1));
+		data.setInsideHumidity((record.insideHum.get() / 1e1));
+		data.setRainCollectorType(unpackRainCollector(record.rain));
+		data.setPrecipitation(unpackRainClicks(record.rain));
+		data.setMaxPrecipitationRate(record.hiRainRate.get());
+		data.setWindSpeed((record.windSpeed.get() / 1e1));
+		data.setWindDirection((record.windDirection.get() == 255) ? null : record.windDirection.get());
+		data.setMaxWindSpeed((record.hiWindSpeed.get() / 1e1));
+		data.setMaxWindDirection((255 == record.hiWindDirection.get()) ? null : record.hiWindDirection.get());
+		data.setWindSamplesNumber(record.numWindSamples.get());
+		data.setSolarRadiation((Short.MIN_VALUE == record.solarRad.get()) ? null : record.solarRad.get());
+		data.setMaxSolarRadiation((Short.MIN_VALUE == record.hiSolarRad.get()) ? null : record.hiSolarRad.get());
+		data.setUVIndex((255 != record.UV.get()) ? null : (record.UV.get() / 1e1));
+		data.setMaxUVIndex((255 != record.hiUV.get()) ? null : (record.hiUV.get() / 1e1));
+		for (int i = 0; i < record.newSensors.length; i++) {
+			if (Short.MIN_VALUE != record.newSensors[i].get()) {
+				data.addNewSensor(record.newSensors[i].get());
+			}
+		}
+		for (int i = 0; i < record.leafTemp.length; i++) {
+			if (0 > record.leafTemp[i].get()) {
+				data.addLeafTemperature((short) (record.leafTemp[i].get() - 90));
+			}
+		}
+		data.setExtraRadiation((Short.MIN_VALUE == record.extraRad.get()) ? null : record.extraRad.get());
+		data.setET((record.ET.get() / 1e3));
+		for (int i = 0; i < record.soilTemp.length; i++) {
+			if (255 != record.soilTemp[i].get()) {
+				data.addSoilTemperature((short) (record.soilTemp[i].get() - 90));
+			}
+		}
+		for (int i = 0; i < record.soilMoisture.length; i++) {
+			if (255 != record.soilMoisture[i].get()) {
+				data.addSoilMoisture(record.soilMoisture[i].get());
+			}
+		}
+		for (int i = 0; i < record.leafWetness.length; i++) {
+			if (255 != record.leafWetness[i].get()) {
+				data.addLeafWetness(record.leafWetness[i].get());
+			}
+		}
+		for (int i = 0; i < record.extraTemp.length; i++) {
+			if (255 != record.extraTemp[i].get()) {
+				data.addExtraTemperature((short) (record.extraTemp[i].get() - 90));
+			}
+		}
+		for (int i = 0; i < record.extraHum.length; i++) {
+			if (255 != record.extraHum[i].get()) {
+				data.addExtraHumidity(record.extraHum[i].get());
+			}
+		}
+		return data;
 	}
-	
-	private static final LocalTime unpackTime(Short value){
+
+	private static final LocalTime unpackTime(Short value) {
 		int hourOfDay = (int) Math.floor(value / 60);
-		int minutesOfHour = (short)value%60;
-		if(hourOfDay == 24) hourOfDay = 0;
+		int minutesOfHour = (short) value % 60;
+		if (hourOfDay == 24)
+			hourOfDay = 0;
 		LocalTime time = LocalTime.of(hourOfDay, minutesOfHour);
 		return time;
 	}
-	
-	private static final Double unpackRainCollector(Unsigned16 rain){
-		switch(rain.get() & 0xF000){
+
+	private static final Double unpackRainCollector(Unsigned16 rain) {
+		switch (rain.get() & 0xF000) {
 		case 0x0000:
 			return 0.1;
 		case 0x1000:
@@ -102,77 +106,77 @@ public class DailyWeatherData implements Serializable{
 			return null;
 		}
 	}
-	
-	private static final Short unpackRainClicks(Unsigned16 rain){
-		return (short)(rain.get() & 0x0FFF);
+
+	private static final Short unpackRainClicks(Unsigned16 rain) {
+		return (short) (rain.get() & 0x0FFF);
 	}
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private LocalDate date;
 	private LocalTime startTime;
 	private LocalTime endTime;
-	
+
 	private Byte iconFlags;
 	private Byte moreFlags;
-	
+
 	private Double outsideTemperature;
 	private Double maxOutsideTemperature;
 	private Double minOutsideTemperature;
-	
+
 	private Double insideTemperature;
-	
+
 	private Double pressure;
-	
+
 	private Double outsideHumidity;
 	private Double insideHumidity;
-	
+
 	private Short precipitation;
 	private Double rainCollectorType;
 	private Short maxPrecipitationRate;
-	
+
 	private Double windSpeed;
 	private Double maxWindSpeed;
 	private Short windDirection;
 	private Short maxWindDirection;
 	private Short windSamplesNumber;
-	
+
 	private Short solarRadiation;
 	private Short maxSolarRadiation;
-	
+
 	private Double UVIndex;
 	private Double maxUVIndex;
-	
+
 	private List<Short> leafTemperature;
-	
+
 	private Short extraRadiation;
-	
+
 	private List<Short> newSensors;
-	
+
 	private Byte forecast;
-	
+
 	private Double ET;
-	
+
 	private List<Short> soilTemperature;
-	
+
 	private List<Short> soilMoisture;
-	
+
 	private List<Short> leafWetness;
-	
+
 	private List<Short> extraTemperature;
-	
+
 	private List<Short> extraHumidity;
-	
-	public DailyWeatherData(){
-		this.leafTemperature =  new ArrayList<>();
+
+	public DailyWeatherData() {
+		this.leafTemperature = new ArrayList<>();
 		this.newSensors = new ArrayList<>();
 		this.soilTemperature = new ArrayList<>();
 		this.soilMoisture = new ArrayList<>();
 		this.leafWetness = new ArrayList<>();
-		this.extraTemperature = new  ArrayList<>();
+		this.extraTemperature = new ArrayList<>();
 		this.extraHumidity = new ArrayList<>();
 	}
 
@@ -391,64 +395,62 @@ public class DailyWeatherData implements Serializable{
 	public void setMoreFlags(Byte moreFlags) {
 		this.moreFlags = moreFlags;
 	}
-	
-	public Short getLeafTemperature(int index){
+
+	public Short getLeafTemperature(int index) {
 		return this.leafTemperature.get(index);
 	}
-	
-	public void addLeafTemperature(Short value){
+
+	public void addLeafTemperature(Short value) {
 		this.leafTemperature.add(value);
 	}
-	
-	public void addNewSensor(Short sensor){
+
+	public void addNewSensor(Short sensor) {
 		this.newSensors.add(sensor);
 	}
-	
-	public Short getNewSensor(int index){
+
+	public Short getNewSensor(int index) {
 		return this.newSensors.get(index);
 	}
-	
-	public Short getSoilTemperature(int index){
+
+	public Short getSoilTemperature(int index) {
 		return this.soilTemperature.get(index);
 	}
-	
-	public void addSoilTemperature(Short value){
+
+	public void addSoilTemperature(Short value) {
 		this.soilTemperature.add(value);
 	}
-	
-	public Short getSoilMoisture(int index){
+
+	public Short getSoilMoisture(int index) {
 		return this.soilMoisture.get(index);
 	}
-	
-	public void addSoilMoisture(Short value){
+
+	public void addSoilMoisture(Short value) {
 		this.soilMoisture.add(value);
 	}
-	
-	public Short getLeafWetness(int index){
+
+	public Short getLeafWetness(int index) {
 		return this.leafWetness.get(index);
 	}
-	
-	public void addLeafWetness(Short value){
+
+	public void addLeafWetness(Short value) {
 		this.leafWetness.add(value);
 	}
-	
-	public Short getExtraTemperature(int index){
+
+	public Short getExtraTemperature(int index) {
 		return this.extraTemperature.get(index);
 	}
-	
-	public void addExtraTemperature(Short value){
+
+	public void addExtraTemperature(Short value) {
 		this.extraTemperature.add(value);
 	}
-	
-	public Short getExtraHumidity(int index){
+
+	public Short getExtraHumidity(int index) {
 		return this.extraHumidity.get(index);
 	}
-	
-	public void addExtraHumidity(Short value){
+
+	public void addExtraHumidity(Short value) {
 		this.extraHumidity.add(value);
 	}
-	
-	
 
 	public List<Short> getLeafTemperature() {
 		return this.leafTemperature;
@@ -506,5 +508,4 @@ public class DailyWeatherData implements Serializable{
 		this.extraHumidity = extraHumidity;
 	}
 
-		
 }

@@ -10,34 +10,45 @@ import javax.persistence.criteria.Root;
 
 import ar.asimov.acumar.ema.model.ProcessInformation;
 
-public class ProcessInformationDAO {
-	
-	private final EntityManager entityManager;
+public class ProcessInformationDAO extends DAO<ProcessInformation>{
 	
 	
 	public ProcessInformationDAO(EntityManager entityManager) {
-		this.entityManager = entityManager;
+		super(entityManager);
 	}
 	
 	public List<ProcessInformation> fetchAll(){
-		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+		CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<ProcessInformation> cq = cb.createQuery(ProcessInformation.class);
 		Root<ProcessInformation> root = cq.from(ProcessInformation.class);
 		cq.select(root);
-		TypedQuery<ProcessInformation> tq = this.entityManager.createQuery(cq);
+		TypedQuery<ProcessInformation> tq = this.getEntityManager().createQuery(cq);
 		return tq.getResultList();
 	}
-	
-	public void create(ProcessInformation processInformation){
-		this.entityManager.persist(processInformation);
+	@Override
+	public void localCreate(ProcessInformation processInformation){
+		this.getEntityManager().persist(processInformation);
 	}
 	
-	public void update(ProcessInformation processInformation){
-		this.entityManager.merge(processInformation);
+	public void localUpdate(ProcessInformation processInformation){
+			this.getEntityManager().merge(processInformation);
 	}
 	
-	public ProcessInformation fetch(Long id){
-		return this.entityManager.find(ProcessInformation.class, id);
+	@Override
+	public ProcessInformation fetch(Object...id){
+		if(id.length != 1) throw new IllegalArgumentException("ProcessInformationDAO.fetch() expects exactly 1 parameter");
+		if(!(id[0] instanceof Long)) throw new IllegalArgumentException("ProcessInformationDAO.fetch() requires parameter to be of type Long");
+		return this.getEntityManager().find(ProcessInformation.class, id);
+	}
+
+	@Override
+	protected void localDelete(ProcessInformation entity) {
+		throw new UnsupportedOperationException("ProcessInformationDAO.delete() is not implemented yet");
+	}
+
+	@Override
+	protected String printEntityId(ProcessInformation entity) {
+		return "["+entity.getStation().getId()+", "+entity.getProcessId().toString()+"]";
 	}
 
 }
