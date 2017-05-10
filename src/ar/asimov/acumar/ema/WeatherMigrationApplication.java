@@ -94,7 +94,7 @@ public class WeatherMigrationApplication {
 			}finally{
 				processInformation.setEnd(LocalDateTime.now());
 				processInformation.setProcessedRecords(totalProduced);
-				if(totalProduced == 0 || totalConsumed == 0){
+				if(processInformation.getProcessedRecords() == 0){
 					Message message = new Message();
 					message.setTitle(station.getName()+" no ha registrado datos");
 					message.setMessage("El proceso de migracion de datos iniciado a las "+ processInformation.getStart().format(DateTimeFormatter.ofPattern("dd/MM/Y hh:mm:ss a"))+ " y finalizado a las "+processInformation.getEnd().format(DateTimeFormatter.ofPattern("dd/MM//Y hh:mm:ss a"))+" para la estacion "+ station.getName() +" no ha producido ningun registro");
