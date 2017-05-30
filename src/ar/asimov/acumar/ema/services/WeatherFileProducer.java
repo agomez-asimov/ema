@@ -142,10 +142,9 @@ public class WeatherFileProducer implements Callable<Integer> {
 			this.getLogger().debug("Processing file " + wlkFile.toString());
 		}
 		if ((null != this.lastFileProcessed
-				&& ((this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()) && this.lastFileProcessed
-						.getLastDayRecords() < reader.getRecordsInDay(this.lastFileProcessed.getLastDayIndex()))
+				&& ((this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()) && (this.lastFileProcessed.getTotalRecords() < reader.getTotalRecords())
 						|| this.lastFileProcessed.getPeriod().isBefore(reader.getFilePeriod())))
-				|| null == this.lastFileProcessed) {
+				|| null == this.lastFileProcessed)) {
 			WeatherFile currentFile;
 			currentFile = new WeatherFile();
 			currentFile.setStation(this.getStation());
@@ -155,8 +154,7 @@ public class WeatherFileProducer implements Callable<Integer> {
 					&& this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()))
 							? this.lastFileProcessed.getLastDayIndex() : 1;
 			for (int i = startDayIndex; i <= currentFile.getPeriod().atEndOfMonth().getDayOfMonth(); i++) {
-				int lastDayRecords = (null != this.lastFileProcessed
-						&& this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()))
+				int lastDayRecords = (null != this.lastFileProcessed && this.lastFileProcessed.getPeriod().equals(reader.getFilePeriod()) && i == this.lastFileProcessed.getLastDayIndex())
 								? this.lastFileProcessed.getLastDayRecords() : 0;
 				if (reader.getRecordsInDay(i) > lastDayRecords) {
 					DailySummaryData dailySummary = reader.readDay(i);
@@ -164,11 +162,6 @@ public class WeatherFileProducer implements Callable<Integer> {
 					currentFile.addWetaherSummary(summary);
 					sleepCounter++;
 					summaryCounter++;
-					/**
-					if (this.goToSleep(sleepCounter)) {
-						Thread.sleep(100);
-					}
-					// */
 					if (this.getLogger().isDebugEnabled()) {
 						this.getLogger().debug("Processed summary record " + i + " [" + summary.getStation().getId()
 								+ ", " + summary.getDate() + "]");

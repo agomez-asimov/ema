@@ -114,14 +114,13 @@ public class WeatherFileConsumer implements Callable<Integer> {
 				this.getLogger().debug("Creating data [" + data.getStation().getId() + ", "
 						+ data.getDate().toString() + ", " + data.getStartTime().toString() + "]");
 			}
-			DAOManager.getDataDAO().create(data);
+			if(null == DAOManager.getDataDAO().fetch(data.getStation().getId(), data.getDate(), data.getStartTime())){
+				DAOManager.getDataDAO().create(data);
+			}else{
+				DAOManager.getDataDAO().update(data);
+			}
 			dataCounter++;
 			commitCounter++;
-			/*;
-			if (this.goToSleep(commitCounter)) {
-				Thread.sleep(100);
-			}
-			//*/
 			if (this.requiresCommit(commitCounter)) {
 				DAOManager.commitTransaction();
 				DAOManager.beginTransaction();
@@ -163,11 +162,13 @@ public class WeatherFileConsumer implements Callable<Integer> {
 	}
 	
 	private void doProcessFile(WeatherFile file) throws DAOException{
-		if (null != DAOManager.getFileDAO().fetch(file.getStation().getId(), file.getPeriod())) {
+		WeatherFile originalFile = null;
+		if ((originalFile = DAOManager.getFileDAO().fetch(file.getStation().getId(), file.getPeriod()))!=null) {
 			if (this.getLogger().isDebugEnabled()) {
 				this.getLogger().debug("Updated file [" + file.getStation().getId() + ", "
 						+ file.getPeriod().toString() + ".wlk]");
 			}
+			file.setDateCreated(originalFile.getDateCreated());
 			file.setDateUpdated(LocalDateTime.now());
 			DAOManager.getFileDAO().update(file);
 		} else {
